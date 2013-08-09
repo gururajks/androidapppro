@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item 
+        android:id="@+id/map_menu" 
+        android:title="Bus Routes/Stops"
+        android:icon="@drawable/ic_maps_icon" 
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/bus_list_menu"        
+        android:icon="@drawable/ic_4_collections_view_as_list_wh"
+        android:title="Buses"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/fav_list_menu"
+        android:icon="@drawable/ic_9_av_make_available_offline_wh"
+        android:title="Favourites"
+        android:showAsAction="always" />
+    <item
+        android:id="@+id/refresh_menu"
+        android:icon="@drawable/ic_1_navigation_refresh_wh"
+        android:title="Refresh"
+        android:showAsAction="always" />    
+    <item
+        android:id="@+id/settings_menu"
+        android:icon="@drawable/ic_repair"     
+        android:title="Settings"        
+        android:showAsAction="never" />    
+
+</menu>

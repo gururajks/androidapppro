@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.transport.mbtalocpro"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="16" />
+
+    <permission
+        android:name="com.transport.mbtalocpro.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.transport.mbtalocpro.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher_new"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.transport.mbtalocpro.HomeActivityContainer"
+            android:label="Predictions" >
+        </activity>
+
+        <uses-library android:name="com.google.android.maps" />
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCu6Swy5PAJZqdceKp5N0mku9xVtVcHDKE" />
+
+        <activity
+            android:name="com.transport.mbtalocpro.MbtaBusList"
+            android:label="Bus List" >
+        </activity>
+        <activity
+            android:name="com.transport.mbtalocpro.FavouriteBusList"
+            android:label="MbtaLocPro" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.transport.mbtalocpro.Settings"
+            android:label="Settings" >
+        </activity>
+        <activity
+            android:name="com.transport.mbtalocpro.RouteStopMap"
+            android:label="Bus Routes/Stops" >
+        </activity>
+        <activity
+            android:name="com.transport.mbtalocpro.BusDirectionList"
+            android:label="@string/title_activity_bus_direction_list" >
+        </activity>
+        <activity
+            android:name="com.transport.mbtalocpro.CommRailList"
+            android:label="@string/title_activity_comm_rail_list" >
+        </activity>
+        <activity
+            android:name="com.transport.mbtalocpro.SubwayList"
+            android:label="@string/title_activity_subway_list" >
+        </activity>
+        <activity
+            android:name="com.transport.mbtalocpro.SubwayDirectionList"
+            android:label="@string/title_activity_subway_direction_list" >
+        </activity>
+        <activity
+            android:name="com.transport.mbtalocpro.CommRailDirectionList"
+            android:label="@string/title_activity_comm_rail_direction_list" >
+        </activity>
+    </application>
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+</manifest>

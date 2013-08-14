@@ -30,11 +30,9 @@
             android:label="Predictions" >
         </activity>
 
-        <uses-library android:name="com.google.android.maps" />
-
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCu6Swy5PAJZqdceKp5N0mku9xVtVcHDKE" />
+            android:value="AIzaSyALvlkNPkiMbwq5IRFHnwZhMBv90XpEWKw" />
 
         <activity
             android:name="com.transport.mbtalocpro.MbtaBusList"

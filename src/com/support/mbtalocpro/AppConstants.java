@@ -11,6 +11,7 @@ public class AppConstants {
 	public final static ArrayList<String> COMMUTER_RAIL_TRAINS() {
 		ArrayList<String> commuterRailMap = new ArrayList<String>();
 		
+		commuterRailMap.add("");
 		commuterRailMap.add("Greenbush Line");
 		commuterRailMap.add("Kingston/Plymouth Line");
 		commuterRailMap.add("Middleborough/Lakeville Line");

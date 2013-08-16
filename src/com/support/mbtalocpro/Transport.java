@@ -1,6 +1,8 @@
 package com.support.mbtalocpro;
 
-public class Transport {
+import java.io.Serializable;
+
+public class Transport implements Serializable {
 	public int id;
 	public String routeTag;
 	public String routeTitle;

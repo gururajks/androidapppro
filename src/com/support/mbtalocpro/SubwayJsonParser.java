@@ -80,8 +80,7 @@ public class SubwayJsonParser {
 				transport.lat = position.getDouble("Lat");
 				transport.lng = position.getDouble("Long");
 				transport.heading = position.getInt("Heading");
-				transport.secSinceReport = position.getInt("Timestamp");
-				//arrivingTransport.vehicles.add(transport);
+				arrivingTransport.vehicles.add(transport);
 			}
 			String destination = trip.getString("Destination");
 			if(destination.equalsIgnoreCase(direction)) {

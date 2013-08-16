@@ -20,7 +20,7 @@ public class ArrivingTransport implements Serializable {
 		minutes = new ArrayList<Integer>();
 		routeTag = new ArrayList<String>();
 		vehicleIds = new ArrayList<String>();
-		//vehicles = new ArrayList<Transport>();
+		vehicles = new ArrayList<Transport>();
 	}
 
 }

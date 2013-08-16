@@ -102,6 +102,7 @@ public class FavouriteBusList extends UrlConnector {
 			}
 		});
 		
+		//Long click for context menu
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {

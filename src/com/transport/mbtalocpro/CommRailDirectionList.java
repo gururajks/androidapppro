@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 
 import com.support.mbtalocpro.AppConstants;
 import com.support.mbtalocpro.ArrivingTransport;
+import com.support.mbtalocpro.CommuterRailParser;
 import com.support.mbtalocpro.DatabaseManager;
 import com.support.mbtalocpro.Direction;
 import com.support.mbtalocpro.RealTimeMbtaDirectionsListParser;
@@ -177,7 +178,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 			new SubwayPrediction().execute(stopId);
 		}
 		else {
-			
+			new CommuterRailPrediction().execute(stopId);
 		}
 	} 
 	
@@ -206,16 +207,22 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 				intent.putExtra("arrivingBus", arrivingTransport);
 				startActivity(intent);				
 			}
-		}
-		
+		}		
 	}
 	
-	class CommunityRailPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
+	class CommuterRailPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
 
 		@Override
 		protected ArrivingTransport doInBackground(String... params) {
+			String choosenDestinationDirectionStop = null;
+			if(choosenDirection != null) {
+				int lastStopIndex = choosenDirection.stopList.size() - 1;
+				choosenDestinationDirectionStop = choosenDirection.stopList.get(lastStopIndex).stopTitle;				
+			}
 			
-			return null;
+			CommuterRailParser commRailParser = new CommuterRailParser(commRailTitle, params[0], choosenDestinationDirectionStop);
+			commRailParser.parseSubwayInfo();
+			return commRailParser.getArrivingTransport();
 		}
 		
 		protected void onPostExecute(ArrivingTransport arrivingTransport) {

@@ -160,7 +160,6 @@ containing a value of this type.
     }
     public static final class id {
         public static final int aboutImg=0x7f04000f;
-        public static final int action_settings=0x7f040028;
         public static final int addbases=0x7f040007;
         public static final int addtofav=0x7f04001c;
         public static final int bookmarkHint=0x7f040006;
@@ -172,9 +171,8 @@ containing a value of this type.
         public static final int buslist=0x7f04000c;
         public static final int button1=0x7f04001f;
         public static final int comm_rail_list_menu=0x7f040023;
-        public static final int deleteBookmark=0x7f04002a;
+        public static final int deleteBookmark=0x7f040028;
         public static final int dirItem=0x7f040013;
-        public static final int editBookmark=0x7f040029;
         public static final int favBusItem=0x7f040015;
         public static final int fav_bus_list=0x7f040009;
         public static final int fav_check=0x7f04001d;
@@ -222,14 +220,7 @@ containing a value of this type.
     public static final class menu {
         public static final int activity_menu=0x7f080000;
         public static final int activity_menu_maptime=0x7f080001;
-        public static final int bus_direction_list=0x7f080002;
-        public static final int comm_rail_direction_list=0x7f080003;
-        public static final int comm_rail_list=0x7f080004;
-        public static final int fav_activity_contextual=0x7f080005;
-        public static final int fav_activity_contextual_menu=0x7f080006;
-        public static final int main=0x7f080007;
-        public static final int subway_direction_list=0x7f080008;
-        public static final int subway_list=0x7f080009;
+        public static final int fav_activity_contextual_menu=0x7f080002;
     }
     public static final class string {
         public static final int action_settings=0x7f050012;

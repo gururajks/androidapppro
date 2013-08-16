@@ -98,6 +98,7 @@ public class BusListAdapter extends BaseAdapter{
 				}
 				else {
 					currCbState.set(index, false);
+					System.out.println(index);
 					dbManager.deleteData(routeInfo.routeTag, choosenDirectionInfo.directionTag, index);
 					Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show();
 				}

@@ -40,8 +40,10 @@ public class FavouriteBusList extends UrlConnector {
 	String choosenDirection;
 	String choosenStop;
 	int BUSLIST = 1;
+	ArrayAdapter<String> favoritesAdapter;
 	ArrayList<String> favBusRouteTags;
 	ArrayList<String> favBusDirectionTitle;
+	ArrayList<String> favBusDirectionTag;
 	ArrayList<String> favBusStopTags;
 	String mbtaTypes[] = new String[] {"Bus", "Subway", "Commuter Rail"}; 
 	@Override
@@ -69,6 +71,7 @@ public class FavouriteBusList extends UrlConnector {
 		favBusRoutes = new ArrayList<String>();
 		favBusRouteTags = new ArrayList<String>();
 		favBusDirectionTitle = new ArrayList<String>();
+		favBusDirectionTag = new ArrayList<String>();
 		favBusStopTags = new ArrayList<String>();
 		DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
 		Cursor favRoutes = dbManager.getAllData();
@@ -77,12 +80,13 @@ public class FavouriteBusList extends UrlConnector {
 				favBusRoutes.add("Route:"+favRoutes.getString(1) + "-" + favRoutes.getString(3) +"@" + favRoutes.getString(5));
 				favBusRouteTags.add(favRoutes.getString(2));
 				favBusDirectionTitle.add(favRoutes.getString(3));
+				favBusDirectionTag.add(favRoutes.getString(4)); 
 				favBusStopTags.add(favRoutes.getString(6));
 			}while(favRoutes.moveToNext());			
 		}
-		
+		 
 		ListView listView = (ListView) findViewById(R.id.fav_bus_list);
-		ArrayAdapter<String> favoritesAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.fav_item, R.id.favBusItem, favBusRoutes);
+		favoritesAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.fav_item, R.id.favBusItem, favBusRoutes);
 		
 		listView.setAdapter(favoritesAdapter);
 		
@@ -105,8 +109,8 @@ public class FavouriteBusList extends UrlConnector {
 		//Long click for context menu
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				registerForContextMenu(arg1);
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				registerForContextMenu(parent);
 				return false;
 			}
 		});
@@ -154,7 +158,7 @@ public class FavouriteBusList extends UrlConnector {
 					Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
 					intent.putExtra("arrivingBus", arrivingBus);
 					startActivity(intent);
-				}
+				} 
 			}
 			else {
 				Toast.makeText(getApplicationContext(), "Unable to get Data - Possible network disruption", Toast.LENGTH_SHORT).show();
@@ -173,18 +177,35 @@ public class FavouriteBusList extends UrlConnector {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-	    switch (item.getItemId()) {
-	        case R.id.editBookmark:
-	            System.out.println("Edit");
-	            return true;
+	    switch (item.getItemId()) {	        
 	        case R.id.deleteBookmark:
 	            // delete the bookmark
-	        	System.out.println(info.id);
+	        	deleteBookmark(info.id);
+	        	Toast.makeText(this, "Removed from favorites", Toast.LENGTH_SHORT).show();
 	            return true;
 	        default:
 	            return super.onContextItemSelected(item);
 	    }
 	}
+	
+	
+	//Deleting bookmark
+	private void deleteBookmark(long id) {		
+		int index = (int) id;
+		if(favoritesAdapter != null) {
+			//delete in the database as well 
+			DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
+			dbManager.deleteDataByStop(favBusRouteTags.get(index), favBusDirectionTag.get(index), favBusStopTags.get(index));
+			favBusRouteTags.remove(index);
+			favBusDirectionTag.remove(index);
+			favBusDirectionTitle.remove(index);
+			favBusStopTags.remove(index);
+			favoritesAdapter.remove(favBusRoutes.get(index));
+			favoritesAdapter.notifyDataSetChanged();
+			dbManager.closeDb();
+		}
+	}
+	
 	
 	
 	public void bookmarkbus(View view) {

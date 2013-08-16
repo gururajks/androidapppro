@@ -33,6 +33,11 @@ public class DatabaseManager {
 							" AND dirTag = '" + dirTag +"'", null);
 	}
 	
+	public void deleteDataByStop(String routeTag, String dirTag, String stopTag) {
+		database.delete(tableName, "routeTag = '"+routeTag+"' AND stopTag = '" + stopTag + 
+				"' AND dirTag = '" + dirTag +"'", null);
+	}
+	
 	public Cursor getData(String routeTag, String dirTag) {
 		return database.rawQuery("SELECT * FROM " + tableName + " WHERE routeTag = '" + routeTag 
 						+ "' AND dirTag = '" + dirTag +"'", null);

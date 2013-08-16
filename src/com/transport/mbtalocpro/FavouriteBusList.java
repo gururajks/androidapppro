@@ -82,7 +82,7 @@ public class FavouriteBusList extends UrlConnector {
 				favBusDirectionTitle.add(favRoutes.getString(3));
 				favBusDirectionTag.add(favRoutes.getString(4)); 
 				favBusStopTags.add(favRoutes.getString(6));
-			}while(favRoutes.moveToNext());			
+			} while(favRoutes.moveToNext());			
 		}
 		 
 		ListView listView = (ListView) findViewById(R.id.fav_bus_list);
@@ -114,7 +114,7 @@ public class FavouriteBusList extends UrlConnector {
 				return false;
 			}
 		});
-
+ 
 		dbManager.closeDb();
 	}
 	

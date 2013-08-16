@@ -221,7 +221,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 			}
 			
 			CommuterRailParser commRailParser = new CommuterRailParser(commRailTitle, params[0], choosenDestinationDirectionStop);
-			commRailParser.parseSubwayInfo();
+			commRailParser.parseCommuterRailInfo();
 			return commRailParser.getArrivingTransport();
 		}
 		

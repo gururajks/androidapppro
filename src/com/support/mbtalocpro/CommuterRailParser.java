@@ -26,15 +26,17 @@ public class CommuterRailParser {
 		this.direction = direction;
 	}
 	
-	public void parseSubwayInfo() {
+	public void parseCommuterRailInfo() {
 		ArrayList<String> commRailMap = AppConstants.COMMUTER_RAIL_TRAINS();
 		URL url;
 		InputStream is = null;
 		try {
 			int indexOfTrainName = commRailMap.indexOf(trainNo);
-			url = new URL("http://developer.mbta.com/lib/RTCR/RailLine_" + indexOfTrainName + ".json");
-			is = getJsonFeed(url);
-			parseJson(is);
+			if(indexOfTrainName > 0) {			//Validity of the index 
+				url = new URL("http://developer.mbta.com/lib/RTCR/RailLine_" + indexOfTrainName + ".json");
+				is = getJsonFeed(url);
+				parseJson(is);
+			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -43,6 +45,8 @@ public class CommuterRailParser {
 		} catch(NullPointerException e) {
 			e.printStackTrace();
 		} catch(JSONException e) {
+			e.printStackTrace();
+		} catch(NumberFormatException e) {
 			e.printStackTrace();
 		}
 	}
@@ -63,7 +67,7 @@ public class CommuterRailParser {
 		return is;		
 	}
 	
-	private void parseJson(InputStream is) throws IOException, NullPointerException, JSONException {
+	private void parseJson(InputStream is) throws IOException, NullPointerException, JSONException, NumberFormatException {
 		String jsonString = getStringFromStream(is);	
 		arrivingTransport = new ArrivingTransport();		
 		arrivingTransport.routeTitle = trainNo;
@@ -101,7 +105,7 @@ public class CommuterRailParser {
 		Date sched = new Date(Long.parseLong(scheduledEpochTime));
 		Date timeS = new Date(Long.parseLong(timeStampEpochTime));
 		Long diff = sched.getTime() - timeS.getTime();
-		int intdiff =  (int) (diff/1000); 		
+		int intdiff =  (int) (diff/60); 		
 		return intdiff;
 	}
 

@@ -43,7 +43,6 @@ public class CommRailList extends FragmentActivity {
 		URL url;
 		try {			
 			url = new URL("http://realtime.mbta.com/developer/api/v1/routes?api_key=" + AppConstants.API_KEY);
-			//url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=mbta&r=70");
 			new RealTimeMbtaDownloadRoutesList().execute(url);
 		} catch (MalformedURLException e) {	
 			e.printStackTrace();
@@ -65,7 +64,7 @@ public class CommRailList extends FragmentActivity {
 		}
 		
 		protected void onPostExecute(TransportModes result) {
-			if(result != null) {						
+			if(result != null) {						 
 				for(TransportMode mode:result.modes) {
 					//mention which form of transportation that should be called
 					if(mode.mode_name.equalsIgnoreCase(transportationType)) {
@@ -75,14 +74,15 @@ public class CommRailList extends FragmentActivity {
 				if(commuterRailMode != null) {
 					for(int i = 0 ; i < commuterRailMode.routes.routesList.size(); i++) {				
 						railList.add(commuterRailMode.routes.routesList.get(i).routeTitle);
-					}
+					} 
 					ListView listView =(ListView) findViewById(R.id.buslist);
 					ArrayAdapter<String> railAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.bus_item, R.id.busItem, railList);
 					listView.setAdapter(railAdapter);		
 					listView.setOnItemClickListener(new OnItemClickListener() {
-						public void onItemClick(AdapterView<?> parent, View view, int index, long id) {
+						public void onItemClick(AdapterView<?> parent, View view, int index, long id) { 
 							Intent intent = new Intent(getApplicationContext(), CommRailDirectionList.class);
 							intent.putExtra("commrailid", commuterRailMode.routes.routesList.get(index).routeTag);
+							intent.putExtra("transportationType", transportationType);
 							intent.putExtra("commrailtitle", commuterRailMode.routes.routesList.get(index).routeTitle);
 							startActivity(intent);
 						}

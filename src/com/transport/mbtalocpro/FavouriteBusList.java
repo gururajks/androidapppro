@@ -19,11 +19,15 @@ import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
@@ -82,6 +86,7 @@ public class FavouriteBusList extends UrlConnector {
 		
 		listView.setAdapter(favoritesAdapter);
 		
+		//Touch event on the favorite pane
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int index, long id) {				
 				String busTag = favBusRouteTags.get(index);
@@ -89,7 +94,6 @@ public class FavouriteBusList extends UrlConnector {
 				choosenStop = favBusStopTags.get(index);
 				URL url;
 				try {			
-					//url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=mbta&r=86");
 					url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=mbta&s="+choosenStop+"&r="+busTag);
 					new DownloadPredictions().execute(url);
 				} catch (MalformedURLException e) {	
@@ -97,12 +101,11 @@ public class FavouriteBusList extends UrlConnector {
 				}
 			}
 		});
+		
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-			
-			//Delete the bookmark
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				
+				registerForContextMenu(arg1);
 				return false;
 			}
 		});
@@ -159,8 +162,28 @@ public class FavouriteBusList extends UrlConnector {
 	}  
 	
 	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, view, menuInfo);
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.fav_activity_contextual_menu, menu);
+	}
 	
-	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	    switch (item.getItemId()) {
+	        case R.id.editBookmark:
+	            System.out.println("Edit");
+	            return true;
+	        case R.id.deleteBookmark:
+	            // delete the bookmark
+	        	System.out.println(info.id);
+	            return true;
+	        default:
+	            return super.onContextItemSelected(item);
+	    }
+	}
 	
 	
 	public void bookmarkbus(View view) {

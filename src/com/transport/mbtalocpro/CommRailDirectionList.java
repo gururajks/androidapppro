@@ -41,6 +41,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 	Direction choosenDirection = null;
 	String commRailTitle = null;
 	String commRailTag = null;
+	String transportationType = null;
 	int BUSLIST = 1;
 	String destinationDirectionStop;
 	
@@ -52,6 +53,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 		Intent intent = getIntent();
 		commRailTag = intent.getStringExtra("commrailid");
 		commRailTitle = intent.getStringExtra("commrailtitle"); 
+		transportationType = intent.getStringExtra("transportationType"); 
 		getCommuterRailDirection(commRailTag);	
 		
 	}
@@ -165,12 +167,23 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 		return null;    	
     }
 
+	/*
+	 * On Selecting the direction list 
+	 */
 	@Override
 	public void onSelectStop(int index, String stopName) {
 		String stopId = choosenDirection.stopList.get(index).stopId;
-		new SubwayPrediction().execute(stopId);		
-	}
+		if (transportationType.equalsIgnoreCase("Subway")) {			
+			new SubwayPrediction().execute(stopId);
+		}
+		else {
+			
+		}
+	} 
 	
+	/*
+	 * Subway prediction with parsing of the subway information provided by the Subway 2.0
+	 */
 	class SubwayPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
 		
 		protected ArrivingTransport doInBackground(String... params) {
@@ -196,6 +209,33 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 		}
 		
 	}
+	
+	class CommunityRailPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
+
+		@Override
+		protected ArrivingTransport doInBackground(String... params) {
+			
+			return null;
+		}
+		
+		protected void onPostExecute(ArrivingTransport arrivingTransport) {
+			if(arrivingTransport != null) {
+				Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
+				intent.putExtra("arrivingBus", arrivingTransport);
+				startActivity(intent);				
+			}
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	/******************* Menu options **************************************/
 	
 	
 	public boolean onCreateOptionsMenu(Menu menu) {

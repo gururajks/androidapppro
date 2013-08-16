@@ -141,7 +141,7 @@ public class BusDirectionList extends UrlConnector implements BusStopsDialogList
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.bus_direction_list, menu);
+		getMenuInflater().inflate(R.menu.activity_menu, menu);
 		return true;
 	}
 
@@ -152,7 +152,6 @@ public class BusDirectionList extends UrlConnector implements BusStopsDialogList
 			String choosenRoute = route.routeTag;
 			URL url;
 			try {			
-				//url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=mbta&r=86");
 				url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=mbta&s="+choosenStop+"&r="+choosenRoute);
 				new DownloadPredictions().execute(url);
 			} catch (MalformedURLException e) {	

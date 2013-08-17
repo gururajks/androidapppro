@@ -128,7 +128,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		 URL url;
 		try {			
 			url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&verbose&a="+agency+"&r="+routeTag);
-			//new DownloadRoutes().execute(url);
+			new DownloadRoutes().execute(url);
 		} catch (MalformedURLException e) {	
 			e.printStackTrace();
 		}

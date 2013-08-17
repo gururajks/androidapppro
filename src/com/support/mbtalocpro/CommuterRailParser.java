@@ -104,7 +104,7 @@ public class CommuterRailParser {
 	private int getMinutes(String scheduledEpochTime, String timeStampEpochTime) {		
 		Date sched = new Date(Long.parseLong(scheduledEpochTime));
 		Date timeS = new Date(Long.parseLong(timeStampEpochTime));
-		Long diff = sched.getTime() - timeS.getTime();
+		Long diff = Math.abs(sched.getTime() - timeS.getTime());
 		int intdiff =  (int) (diff/60); 		
 		return intdiff;
 	}

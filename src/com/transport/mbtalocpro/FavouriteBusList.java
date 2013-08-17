@@ -88,7 +88,7 @@ public class FavouriteBusList extends UrlConnector {
 		ListView listView = (ListView) findViewById(R.id.fav_bus_list);
 		favoritesAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.fav_item, R.id.favBusItem, favBusRoutes);
 		
-		listView.setAdapter(favoritesAdapter);
+		listView.setAdapter(favoritesAdapter); 
 		
 		//Touch event on the favorite pane
 		listView.setOnItemClickListener(new OnItemClickListener() {

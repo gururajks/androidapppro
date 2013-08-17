@@ -47,7 +47,7 @@ public class FavouriteBusList extends UrlConnector {
 	ArrayList<String> favBusStopTags;
 	String mbtaTypes[] = new String[] {"Bus", "Subway", "Commuter Rail"}; 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_fav_bus_list);
 		/*if(android.os.Build.VERSION.SDK_INT >= 11) {
@@ -134,6 +134,7 @@ public class FavouriteBusList extends UrlConnector {
 			if(result != null) {
 				if(!result.isEmpty()) {
 					ArrivingTransport arrivingBus = new ArrivingTransport();
+					arrivingBus.transportType = "Bus";
 					for(int i = 0 ; i < result.size(); i++) {		//Iterate through multiple predictions tag
 						RoutePrediction predictedRoute = (RoutePrediction) result.get(i);
 						ArrayList<DirectionPrediction> predictedDirections = predictedRoute.dirForPredictions;
@@ -145,16 +146,16 @@ public class FavouriteBusList extends UrlConnector {
 									Prediction busPrediction = predictions.get(k);
 									arrivingBus.minutes.add(busPrediction.minutes);
 									arrivingBus.routeTag.add(predictedRoute.routeTag);									
-									arrivingBus.vehicleIds.add(busPrediction.vehicleId);
+									arrivingBus.vehicleIds.add(busPrediction.vehicleId); 
 									arrivingBus.dirTag = busPrediction.directionTag;
 								}
 								arrivingBus.direction = choosenDirection;
-							}
+							} 
 						} 
 						arrivingBus.routeTitle = predictedRoute.routeTitle;
 						arrivingBus.stopTitle = predictedRoute.stopTitle;
 						arrivingBus.stopTag = predictedRoute.stopTag;
-					}			
+					}		
 					Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
 					intent.putExtra("arrivingBus", arrivingBus);
 					startActivity(intent);

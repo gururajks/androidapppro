@@ -68,10 +68,11 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         Intent intent = getIntent();
         arrivingBus = (ArrivingTransport) intent.getSerializableExtra("arrivingBus");
         
-        
+
+		
         PredictionTimeFragment predictedTime = (PredictionTimeFragment) getSupportFragmentManager().findFragmentById(R.id.listFragment);
-        predictedTime.setArrivingBusDetails(getApplicationContext(), arrivingBus);
-        stopTag = arrivingBus.stopTag;
+        predictedTime.setArrivingBusDetails(getApplicationContext(), arrivingBus);        
+        stopTag = arrivingBus.stopTag;        
         if(arrivingBus.routeTag != null) {
         	if(!arrivingBus.routeTag.isEmpty()) {
         		routeTag = arrivingBus.routeTag.get(0);        		
@@ -116,7 +117,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	public void getBusLocationData(String routeTag) {				
 		URL url;
 		try {
-			url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a="+agency+"&r=" +routeTag+"&t=0");
+			url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a="+agency+"&r=" +routeTag+"&t=0");		
 			new DownloadVehicleLocation().execute(url);
 		} catch (MalformedURLException e) {	
 			e.printStackTrace();
@@ -127,7 +128,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		 URL url;
 		try {			
 			url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&verbose&a="+agency+"&r="+routeTag);
-			new DownloadRoutes().execute(url);
+			//new DownloadRoutes().execute(url);
 		} catch (MalformedURLException e) {	
 			e.printStackTrace();
 		}

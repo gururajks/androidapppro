@@ -114,7 +114,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 							stopList.put(stopId, pairedStop);							
 						}
 						getBusStopsData(route, choosenDirection, stopList);			
-					}
+					} 
 				});
 			}
 		}
@@ -207,7 +207,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 				intent.putExtra("arrivingBus", arrivingTransport);
 				startActivity(intent);				
 			}
-		}		
+		}		 
 	}
 	
 	class CommuterRailPrediction extends AsyncTask<String, Integer, ArrivingTransport> {

@@ -39,14 +39,16 @@ public class BusListAdapter extends BaseAdapter{
 	Context context;
 	int [] savedCbState;
 	ArrayList<Boolean> currCbState;
+	String transportationType;
 	DatabaseManager dbManager;
 	//Get the list of buses in a given agency
-	public BusListAdapter (Route route, Direction choosenDirection,LinkedHashMap<String, String> stopList,Context context, int[] savedCbState) {
+	public BusListAdapter (Route route, Direction choosenDirection,LinkedHashMap<String, String> stopList,Context context, int[] savedCbState, String transportationType) {
 		routeInfo = route;		
 		choosenDirectionInfo = choosenDirection;
 		this.stopList = stopList;
 		this.context = context;
 		this.savedCbState = savedCbState;
+		this.transportationType = transportationType;
 		currCbState = new ArrayList<Boolean>();
 		stopsTitleList = new ArrayList<String>(stopList.values());
 		stopsTagList = new ArrayList<String>(stopList.keySet());
@@ -89,11 +91,11 @@ public class BusListAdapter extends BaseAdapter{
 			@Override
 			public void onClick(View cbView) {
 				DatabaseManager dbManager = new DatabaseManager(context);
-				CheckBox lcbView = (CheckBox) cbView;
+				CheckBox lcbView = (CheckBox) cbView; 
 				if(lcbView.isChecked()) {
 					currCbState.set(index, true);
 					dbManager.saveData(routeInfo.routeTitle, routeInfo.routeTag, choosenDirectionInfo.directionTitle, 
-							choosenDirectionInfo.directionTag, stopsTitleList.get(index), stopsTagList.get(index), index);
+							choosenDirectionInfo.directionTag, stopsTitleList.get(index), stopsTagList.get(index), index, transportationType);
 					Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show();
 				}
 				else {

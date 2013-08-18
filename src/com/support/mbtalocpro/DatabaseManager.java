@@ -11,12 +11,12 @@ public class DatabaseManager {
 	public final String DATABASE_NAME = "mbtaprobusbookmark.db";
 	
 	public DatabaseManager(Context context) {
-		DatabaseHelper helper = new DatabaseHelper(context, DATABASE_NAME, null, 5);
+		DatabaseHelper helper = new DatabaseHelper(context, DATABASE_NAME, null, 7);
 		database = helper.getWritableDatabase();		
 	}
 	
 	public void saveData(String routeNo, String routeTag, 
-		String dirTitle, String dirTag, String stopTitle, String stopTag, int listPosition) {
+		String dirTitle, String dirTag, String stopTitle, String stopTag, int listPosition, String transportationType) {
 		ContentValues contentValues = new ContentValues();
 		contentValues.put("route", routeNo);
 		contentValues.put("listposition", listPosition);
@@ -25,6 +25,7 @@ public class DatabaseManager {
 		contentValues.put("dirTitle", dirTitle);
 		contentValues.put("stopTag", stopTag);
 		contentValues.put("stopTitle", stopTitle);
+		contentValues.put("transportationType", transportationType);
 		database.insert(tableName, null, contentValues);
 	}
 	

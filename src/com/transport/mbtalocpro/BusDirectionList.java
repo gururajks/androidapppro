@@ -73,7 +73,7 @@ public class BusDirectionList extends UrlConnector implements BusStopsDialogList
 		checkBoxCursor.close();
 		dbManager.closeDb();
 		DialogFragment routeDialog = new BusStopsDialog().newInstance(route, choosenDirection, stopNames, savedCbState);
-		routeDialog.show(getSupportFragmentManager(), "busStops");
+		routeDialog.show(getSupportFragmentManager(), "Bus");
 	}
 	
 	private void getBusesDirections() {	

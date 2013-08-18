@@ -6,10 +6,13 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import com.support.mbtalocpro.ArrivingTransport;
+import com.support.mbtalocpro.CommuterRailParser;
 import com.support.mbtalocpro.DatabaseManager;
 import com.support.mbtalocpro.DirectionPrediction;
+import com.support.mbtalocpro.FavoriteListItemObject;
 import com.support.mbtalocpro.Prediction;
 import com.support.mbtalocpro.RoutePrediction;
+import com.support.mbtalocpro.SubwayJsonParser;
 
 
 import android.os.AsyncTask;
@@ -41,10 +44,11 @@ public class FavouriteBusList extends UrlConnector {
 	String choosenStop;
 	int BUSLIST = 1;
 	ArrayAdapter<String> favoritesAdapter;
-	ArrayList<String> favBusRouteTags;
+	ArrayList<FavoriteListItemObject> favoriteObjectList;
+	/*ArrayList<String> favBusRouteTags;
 	ArrayList<String> favBusDirectionTitle;
 	ArrayList<String> favBusDirectionTag;
-	ArrayList<String> favBusStopTags;
+	ArrayList<String> favBusStopTags;*/
 	String mbtaTypes[] = new String[] {"Bus", "Subway", "Commuter Rail"}; 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) { 
@@ -69,19 +73,24 @@ public class FavouriteBusList extends UrlConnector {
 	//Displays the routes in the sql database
 	public void displayFavoriteRoutes() {
 		favBusRoutes = new ArrayList<String>();
-		favBusRouteTags = new ArrayList<String>();
+		/*favBusRouteTags = new ArrayList<String>();
 		favBusDirectionTitle = new ArrayList<String>();
 		favBusDirectionTag = new ArrayList<String>();
-		favBusStopTags = new ArrayList<String>();
+		favBusStopTags = new ArrayList<String>();*/
+		favoriteObjectList = new ArrayList<FavoriteListItemObject>();
 		DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
 		Cursor favRoutes = dbManager.getAllData();
 		if(favRoutes != null && favRoutes.moveToFirst()) {			
 			do {
+				FavoriteListItemObject favoriteObjectListItem = new FavoriteListItemObject(); 
 				favBusRoutes.add("Route:"+favRoutes.getString(1) + "-" + favRoutes.getString(3) +"@" + favRoutes.getString(5));
-				favBusRouteTags.add(favRoutes.getString(2));
-				favBusDirectionTitle.add(favRoutes.getString(3));
-				favBusDirectionTag.add(favRoutes.getString(4)); 
-				favBusStopTags.add(favRoutes.getString(6));
+				favoriteObjectListItem.routeTitle = favRoutes.getString(1);
+				favoriteObjectListItem.routeTag = (favRoutes.getString(2));
+				favoriteObjectListItem.directionTitle = (favRoutes.getString(3));
+				favoriteObjectListItem.directionTag = (favRoutes.getString(4)); 
+				favoriteObjectListItem.stopTag = (favRoutes.getString(6));
+				favoriteObjectListItem.transportationType = favRoutes.getString(8);
+				favoriteObjectList.add(favoriteObjectListItem);
 			} while(favRoutes.moveToNext());			
 		}
 		 
@@ -93,15 +102,33 @@ public class FavouriteBusList extends UrlConnector {
 		//Touch event on the favorite pane
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int index, long id) {				
-				String busTag = favBusRouteTags.get(index);
-				choosenDirection = favBusDirectionTitle.get(index);
-				choosenStop = favBusStopTags.get(index);
-				URL url;
-				try {			
-					url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=mbta&s="+choosenStop+"&r="+busTag);
-					new DownloadPredictions().execute(url);
-				} catch (MalformedURLException e) {	
-					e.printStackTrace();
+				FavoriteListItemObject favoriteListItemObject = favoriteObjectList.get(index);
+				String choosenRouteTag = favoriteListItemObject.routeTag;
+				String choosenRouteTitle = favoriteListItemObject.routeTitle;
+				choosenDirection = favoriteListItemObject.directionTitle;
+				String choosenDirectionTag = favoriteListItemObject.directionTag;				
+				choosenStop = favoriteListItemObject.stopTag;
+				
+				//Bus Transportation predictions
+				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Bus")) {
+					URL url;
+					try {			 
+						url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=mbta&s="+choosenStop+"&r="+choosenRouteTag);
+						new DownloadBusPredictions().execute(url);
+					} catch (MalformedURLException e) {	
+						e.printStackTrace();
+					}
+				}
+				
+				//Subway Transportation predictions 
+				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Subway")) {
+					new DownloadSubwayPredictions().execute(choosenRouteTitle, choosenDirectionTag, choosenStop);
+				}
+				
+				//Commuter Rail Predictions 
+				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Commuter Rail")) {
+					System.out.println("TRANSPORTATION: Fav" + choosenRouteTitle + choosenStop + choosenDirectionTag);
+					new DownloadCommuterRailPredictions().execute(choosenRouteTitle, choosenDirectionTag, choosenStop);
 				}
 			}
 		});
@@ -118,8 +145,8 @@ public class FavouriteBusList extends UrlConnector {
 		dbManager.closeDb();
 	}
 	
-	
-	private class DownloadPredictions extends AsyncTask<URL, Integer, ArrayList<Object>> {    	
+	/* Private classes for predictions - Bus*/	
+	private class DownloadBusPredictions extends AsyncTask<URL, Integer, ArrayList<Object>> {    	
 		@Override
 		protected ArrayList<Object> doInBackground(URL... urls) {
 			try {
@@ -168,6 +195,68 @@ public class FavouriteBusList extends UrlConnector {
 	}  
 	
 	
+	/* Private classes for predictions - Subway
+	 * choosenRouteTag, choosenDirection, choosenStop */	
+	private class DownloadSubwayPredictions extends AsyncTask<String, Integer, ArrivingTransport> {
+
+		@Override
+		protected ArrivingTransport doInBackground(String... params) {
+			
+			
+			SubwayJsonParser subwayParser = new SubwayJsonParser(params[0], params[2], params[1]);
+			subwayParser.parseSubwayInfo();
+			return subwayParser.getArrivingTransport();
+			
+		}
+		
+		protected void onPostExecute(ArrivingTransport arrivingTransport) {
+			if(arrivingTransport != null) {
+				Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
+				intent.putExtra("arrivingBus", arrivingTransport);
+				startActivity(intent);				
+			}
+		}
+		
+		
+		
+	}
+		
+	/* Private classes for predictions - Commuter Rail*/
+	private class DownloadCommuterRailPredictions extends AsyncTask<String, Integer, ArrivingTransport> {
+
+		@Override
+		protected ArrivingTransport doInBackground(String... params) {
+			/*String choosenDestinationDirectionStop = null;
+			if(choosenDirection != null) {
+				int lastStopIndex = choosenDirection.stopList.size() - 1;
+				choosenDestinationDirectionStop = choosenDirection.stopList.get(lastStopIndex).stopTitle;				
+			}*/
+			
+			CommuterRailParser commRailParser = new CommuterRailParser(params[0], params[2], params[1]);
+			commRailParser.parseCommuterRailInfo();
+			return commRailParser.getArrivingTransport(); 			
+		}
+		
+		protected void onPostExecute(ArrivingTransport arrivingTransport) {
+			if(arrivingTransport != null) {
+				Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
+				intent.putExtra("arrivingBus", arrivingTransport);
+				startActivity(intent);				
+			}
+		}
+		
+		
+		
+	}
+	
+	
+	
+	
+	/************************************* MENU OPTIONS ********************************/
+	
+	
+	
+	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, view, menuInfo);
@@ -196,11 +285,9 @@ public class FavouriteBusList extends UrlConnector {
 		if(favoritesAdapter != null) {
 			//delete in the database as well 
 			DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
-			dbManager.deleteDataByStop(favBusRouteTags.get(index), favBusDirectionTag.get(index), favBusStopTags.get(index));
-			favBusRouteTags.remove(index);
-			favBusDirectionTag.remove(index);
-			favBusDirectionTitle.remove(index);
-			favBusStopTags.remove(index);
+			FavoriteListItemObject favoriteListItemObject = favoriteObjectList.get(index);
+			dbManager.deleteDataByStop(favoriteListItemObject.routeTag, favoriteListItemObject.directionTag, favoriteListItemObject.stopTag);
+			favoriteObjectList.remove(index);
 			favoritesAdapter.remove(favBusRoutes.get(index));
 			favoritesAdapter.notifyDataSetChanged();
 			dbManager.closeDb();

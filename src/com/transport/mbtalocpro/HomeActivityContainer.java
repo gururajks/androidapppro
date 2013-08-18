@@ -135,7 +135,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	}
 	
 	private class DownloadVehicleLocation extends AsyncTask<URL, Integer, ArrayList<Object>> {
-		
+			
 		@Override
 		protected ArrayList<Object> doInBackground(URL... urls) {
 			try {

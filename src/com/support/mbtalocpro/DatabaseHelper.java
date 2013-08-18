@@ -23,8 +23,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				   "dirTitle TEXT, " +
 				   "dirTag TEXT, " +
 				   "stopTitle TEXT, " +
-				   "stopTag TEXT, " +
-				   "listposition INTEGER)");
+				   "stopTag TEXT, " +				   
+				   "listposition INTEGER, " + 
+				   "transportationType TEXT)");
 		database.execSQL("CREATE TABLE if not exists " + commRailTableName + 
 				" (id INTEGER PRIMARY KEY, " +
 				   "route TEXT, " +

@@ -45,24 +45,24 @@ public class BusStopsDialog extends DialogFragment {
 		choosenDirectionInfo = choosendirection;
 		routeInfo = route;
 		savedCbState = cbState;
+		
 		BusStopsDialog stopDialog = new BusStopsDialog();
 		return stopDialog;
 	}
-	
+	 
 	
 	public Dialog onCreateDialog(Bundle savedInstanceState) {		
 		AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
 		LayoutInflater customLayout = getActivity().getLayoutInflater();
 		View view = customLayout.inflate(R.layout.stop_list, null);
 		ListView directionListView = (ListView) view.findViewById(R.id.stopList);
-		
-		// CHANGE THE ADAPTER TO BUSLISTADAPTER CLASS
-		BusListAdapter stopListAdapter = new BusListAdapter(routeInfo, choosenDirectionInfo, stopList, getActivity(), savedCbState);
+		String transportationType = this.getTag();	
+		BusListAdapter stopListAdapter = new BusListAdapter(routeInfo, choosenDirectionInfo, stopList, getActivity(), savedCbState, transportationType);
 		//INCOMPLETE				
 		directionListView.setAdapter(stopListAdapter);
 		directionListView.setOnItemClickListener(new BusStopDialogClickListener());
 		dialog.setView(view);
-		dialog.setTitle("Pick your Bus Stop");
+		dialog.setTitle("Pick your " + transportationType + " Stop");
 		
 		return dialog.create();		
 	}

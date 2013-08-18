@@ -20,7 +20,6 @@ import com.support.mbtalocpro.Stop;
 import com.support.mbtalocpro.SubwayJsonParser;
 import com.support.mbtalocpro.TransportModes;
 import com.transport.mbtalocpro.BusStopsDialog.BusStopsDialogListener;
-import com.transport.mbtalocpro.SubwayDirectionList.SubwayPrediction;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -96,16 +95,26 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 						//Direction + last stop name (which becomes the destination)
 						int lastStopIndex = destinationDirection.stopList.size() - 1;
 						destinationDirectionStop = destinationDirection.stopList.get(lastStopIndex).stopTitle;
-						directionList.add(destinationDirection.directionTitle + "-" + destinationDirectionStop);						
-					}
+						directionList.add(destinationDirection.directionTitle + ": " + destinationDirectionStop);
+						if(transportationType.equalsIgnoreCase("Subway")) {				//Station suffix is not needed as it cannot compared
+							String[] directionStripped = destinationDirectionStop.split(" ");						
+							result.directionList.get(i).directionTag = directionStripped[0];
+						}
+						else if(transportationType.equalsIgnoreCase("Commuter Rail")) {	//station suffix is needed											
+							result.directionList.get(i).directionTag = destinationDirectionStop;
+						}
+						
+					
+					} 
 				}
 				ListView listView = (ListView) findViewById(R.id.bus_dir_list);
 				ArrayAdapter<String> commDirectionAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.direction_item, R.id.dirItem, directionList);					
 				listView.setAdapter(commDirectionAdapter);	
-				
-				listView.setOnItemClickListener(new OnItemClickListener() {
+				 
+				listView.setOnItemClickListener(new OnItemClickListener() { 
 					public void onItemClick(AdapterView<?> parent, View view, int index, long id) {
 						choosenDirection = route.directionList.get(index);
+						
 						ArrayList<Stop> stops = choosenDirection.stopList;
 						LinkedHashMap<String, String> stopList = new LinkedHashMap<String, String>();
 						for(int i = 0; i < stops.size(); i++) {
@@ -122,7 +131,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 	
 	public void getBusStopsData(Route route, Direction choosenDirection, LinkedHashMap<String, String> stopNames) {
 		DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
-		int savedCbState[] = null;
+		int savedCbState[] = null; 
 		Cursor checkBoxCursor = dbManager.getData(route.routeTag, choosenDirection.directionTag);
 		if(checkBoxCursor != null && checkBoxCursor.moveToFirst()) {
 			savedCbState = new int[checkBoxCursor.getCount()];
@@ -135,15 +144,14 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 		checkBoxCursor.close();
 		dbManager.closeDb();
 		DialogFragment routeDialog = new BusStopsDialog().newInstance(route, choosenDirection, stopNames, savedCbState);
-		routeDialog.show(getSupportFragmentManager(), "railStops");
+		routeDialog.show(getSupportFragmentManager(), transportationType);
 	}
 			
 	
 	public Route downloadUrl(URL url) throws IOException {
     	InputStream is = null;
     	HttpURLConnection conn = null;
-    	try {   		
-    		
+    	try {    		
     		conn = (HttpURLConnection) url.openConnection(); 
     		conn.setReadTimeout(10000);
     		conn.setConnectTimeout(10000);
@@ -210,6 +218,9 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 		}		 
 	}
 	
+	/*
+	 * Commuter Rail prediction with there JSON feed
+	 */
 	class CommuterRailPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
 
 		@Override
@@ -220,6 +231,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 				choosenDestinationDirectionStop = choosenDirection.stopList.get(lastStopIndex).stopTitle;				
 			}
 			
+			System.out.println("TRANSPORTATION: befo" + commRailTitle + params[0] + choosenDestinationDirectionStop);
 			CommuterRailParser commRailParser = new CommuterRailParser(commRailTitle, params[0], choosenDestinationDirectionStop);
 			commRailParser.parseCommuterRailInfo();
 			return commRailParser.getArrivingTransport();
@@ -231,8 +243,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 				intent.putExtra("arrivingBus", arrivingTransport);
 				startActivity(intent);				
 			}
-		}
-		
+		}	
 		
 	}
 	

@@ -95,6 +95,10 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            	/*for(Transport train:arrivingBus.vehicles) 
 	            		createGpsMarker(train);//this is for trains*/
 	            }
+	            if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
+	            	/*for(Transport train:arrivingBus.vehicles) 
+	            		createGpsMarker(train);//this is for trains*/
+	            }
 	    	}
 	    }
         

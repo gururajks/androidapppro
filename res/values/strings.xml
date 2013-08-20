@@ -9,5 +9,13 @@
     <string name="title_activity_subway_list">Subway</string>
     <string name="title_activity_subway_direction_list">SubwayDirectionList</string>
     <string name="title_activity_comm_rail_direction_list">Commuter Rail Direction</string>
+    <string-array name="time_format_text">
+        <item >Minutes (MM)</item>
+        <item >Minutes with Seconds (MM:SS)</item>
+    </string-array>
+    <string-array name="time_format_value">
+        <item >0</item>
+        <item >1</item>
+    </string-array>
 
 </resources>

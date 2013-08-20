@@ -1,6 +1,7 @@
 package com.transport.mbtalocpro;
 
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -11,14 +12,15 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
-public class Settings extends FragmentActivity {
+public class Settings extends PreferenceActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_settings);
+		addPreferencesFromResource(R.xml.preferences);
 	}
 
+	/*
 	public void about(View view) {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
 		dialog.setTitle("About");
@@ -37,7 +39,9 @@ public class Settings extends FragmentActivity {
 		} catch (ActivityNotFoundException ex) {
 		    Toast.makeText(Settings.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
 		}
-	}
+	}*/
+	
+	
 	
 	
 }

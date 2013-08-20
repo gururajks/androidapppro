@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference 
+        android:key="prediction_time_format" 
+        android:title="Time format"
+        android:dialogTitle="Time format" 
+        android:entries="@array/time_format_text"
+        android:entryValues="@array/time_format_value"
+        android:defaultValue="1"
+        android:summary="Predicted arrival time format" />
+    
+    <PreferenceCategory 
+        android:title="Map"
+        android:key="map_category">
+	    <CheckBoxPreference 
+	        android:key="gps_setting"
+	        android:defaultValue="true" 
+	        android:title="GPS Location" 
+	        android:summary="Disable to conserve power" />
+		<CheckBoxPreference 
+		    android:key="map_traffic"
+		    android:defaultValue="true"
+		    android:title="Show traffic"
+		    android:summary="Can slow down maps rendering" />
+	</PreferenceCategory>
+    
+</PreferenceScreen>

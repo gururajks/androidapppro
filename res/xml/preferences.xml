@@ -19,9 +19,20 @@
 	        android:summary="Disable to conserve power" />
 		<CheckBoxPreference 
 		    android:key="map_traffic"
-		    android:defaultValue="true"
+		    android:defaultValue="false"
 		    android:title="Show traffic"
-		    android:summary="Can slow down maps rendering" />
+		    android:summary="Enabling can slow down maps rendering" />
+	</PreferenceCategory>
+	<PreferenceCategory 
+	    android:key="about_category"
+	    android:title="About">
+	    <Preference 
+	        android:key="about"
+	        android:title="About" />
+	    <Preference 
+	        android:key="feedback"
+	        android:title="Send Feedback / Bug reports" />
+	    
 	</PreferenceCategory>
     
 </PreferenceScreen>

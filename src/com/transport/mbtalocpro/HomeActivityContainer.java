@@ -21,6 +21,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.support.mbtalocpro.ArrivingTransport;
+import com.support.mbtalocpro.DirectionPrediction;
+import com.support.mbtalocpro.Prediction;
+import com.support.mbtalocpro.RoutePrediction;
 import com.support.mbtalocpro.Transport;
 import com.support.mbtalocpro.Direction;
 import com.support.mbtalocpro.Path;
@@ -61,14 +64,14 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	private final String TRAFFIC_MENU_KEY = "map_traffic";
 	private boolean gps_menu_setting;
 	private boolean traffic_menu_setting;
-	
+	SharedPreferences sharedPref;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_time);
         
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         
         routeDir = new LinkedHashMap<String, String>();
 		latList = new ArrayList<Double>();
@@ -78,9 +81,14 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         Intent intent = getIntent();
         arrivingBus = (ArrivingTransport) intent.getSerializableExtra("arrivingBus");
         
-
-		
-        PredictionTimeFragment predictedTime = (PredictionTimeFragment) getSupportFragmentManager().findFragmentById(R.id.listFragment);
+        populateFragments(arrivingBus);
+                
+	}
+    
+    
+    
+    public void populateFragments(ArrivingTransport arrivingBus) { 
+    	PredictionTimeFragment predictedTime = (PredictionTimeFragment) getSupportFragmentManager().findFragmentById(R.id.listFragment);
         predictedTime.setArrivingBusDetails(getApplicationContext(), arrivingBus);        
         stopTag = arrivingBus.stopTag;        
         if(arrivingBus.routeTag != null) {
@@ -116,10 +124,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            }
 	    	}
 	    }
-        
-         
-
-	}
+    }
     
 
 	public void getFeeds() {
@@ -318,10 +323,81 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			finish();
 		}
 		if(item.getItemId() == R.id.refresh_menu) {
+			if(arrivingBus.transportType.equalsIgnoreCase("Bus")) {
+				downloadBusPredictions();	
+			} 
+			if(arrivingBus.transportType.equalsIgnoreCase("Subway")) {
+				
+			}
+			if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
+				
+			}
+			if(gMap != null) gMap.clear();
 			getFeeds();
 		}
 		return super.onMenuItemSelected(featureId, item);		
 	}
+	
+	
+	public void downloadBusPredictions() {
+		URL url; 
+		try {			
+			url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=mbta&s="+arrivingBus.stopTag+"&r="+routeTag);			
+			new DownloadPredictions().execute(url);
+		} catch (MalformedURLException e) {	
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private class DownloadPredictions extends AsyncTask<URL, Integer, ArrayList<Object>> {    	
+		@Override
+		protected ArrayList<Object> doInBackground(URL... urls) {
+			try {
+            	return downloadUrl(urls[0], 4);
+            } catch (IOException e) {
+                System.out.println("Unable to retrieve web page. URL may be invalid.");
+            }
+			return null;
+		}		
+		
+		
+		protected void onPostExecute(ArrayList<Object> result) {
+			if(result != null) {
+				if(!result.isEmpty()) {
+					ArrivingTransport arrivingTransport = new ArrivingTransport();
+					arrivingTransport.transportType = "Bus";
+					for(int i = 0 ; i < result.size(); i++) {		//Iterate through multiple predictions tag
+						RoutePrediction predictedRoute = (RoutePrediction) result.get(i);
+						ArrayList<DirectionPrediction> predictedDirections = predictedRoute.dirForPredictions;
+						for(int j = 0 ; j < predictedDirections.size(); j++) {	//Iterate through multiple direction tag
+							DirectionPrediction predictedDirection = predictedDirections.get(j);
+							if(predictedDirection.directionTitle.equalsIgnoreCase(arrivingBus.direction)) {	//checking for the choosen direction
+								ArrayList<Prediction> predictions = predictedDirection.predictionList;
+								for(int k = 0 ; k < predictions.size(); k++) {		//Iterate through multiple prediction tags
+									Prediction busPrediction = predictions.get(k);
+									arrivingTransport.minutes.add(busPrediction.minutes);
+									arrivingTransport.routeTag.add(predictedRoute.routeTag);									
+									arrivingTransport.vehicleIds.add(busPrediction.vehicleId);
+								}
+								arrivingTransport.direction = arrivingBus.direction;
+								arrivingTransport.dirTag = arrivingBus.dirTag;
+							}							
+						}
+						arrivingTransport.routeTitle = predictedRoute.routeTitle;
+						arrivingTransport.stopTitle = predictedRoute.stopTitle;
+						arrivingTransport.stopTag = predictedRoute.stopTag;
+					}					
+					populateFragments(arrivingTransport);					
+				}
+			}
+			else {
+				Toast.makeText(getApplicationContext(), "Unable to get Data - Possible network disruption", Toast.LENGTH_SHORT).show();
+			}
+		}	 
+	}  
+	
+	
 	
 	@Override
 	public void onLocationChanged(Location location) {

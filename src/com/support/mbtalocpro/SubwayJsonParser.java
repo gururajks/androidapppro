@@ -63,7 +63,7 @@ public class SubwayJsonParser {
 		InputStream is = conn.getInputStream();
 		return is;		
 	}
-	
+	 
 	private void parseJson(InputStream is) throws IOException, NullPointerException, JSONException {
 		String jsonString = getStringFromStream(is);		
 		arrivingTransport = new ArrivingTransport();		
@@ -71,13 +71,16 @@ public class SubwayJsonParser {
 		JSONObject json = new JSONObject(jsonString);		
 		JSONObject tripList = json.getJSONObject("TripList");
 		arrivingTransport.transportType = "Subway";
-		JSONArray trips = tripList.getJSONArray("Trips");		
+		Long currentTime = tripList.getLong("CurrentTime");
+		JSONArray trips = tripList.getJSONArray("Trips"); 		
 		for(int i = 0 ; i < trips.length(); i++) {
 			JSONObject trip = (JSONObject) trips.get(i);					
 			if(!trip.isNull("Position")) {
 				JSONObject position = (JSONObject) trip.getJSONObject("Position");
 				Transport transport = new Transport();
-				transport.lat = position.getDouble("Lat");
+				Long timestamp = position.getLong("Timestamp");
+				transport.secSinceReport = (int) Math.abs(timestamp - currentTime);
+				transport.lat = position.getDouble("Lat"); 
 				transport.lng = position.getDouble("Long");
 				transport.heading = position.getInt("Heading");
 				arrivingTransport.vehicles.add(transport);
@@ -87,7 +90,7 @@ public class SubwayJsonParser {
 				arrivingTransport.dirTag = destination;
 				arrivingTransport.direction = destination;
 				JSONArray predictions = trip.getJSONArray("Predictions");				
-				for(int j = 0 ; j < predictions.length(); j++) { 
+				for(int j = 0 ; j < predictions.length(); j++) {  
 					JSONObject prediction = (JSONObject) predictions.get(j);
 					if(prediction.getString("StopID").equalsIgnoreCase(stopNames)) {
 						arrivingTransport.stopTitle = prediction.getString("Stop");

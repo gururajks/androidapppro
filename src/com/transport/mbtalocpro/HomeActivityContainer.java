@@ -30,6 +30,7 @@ import com.support.mbtalocpro.Stop;
 import com.transport.mbtalocpro.PredictionTimeFragment.PredictedTimeFragmentItemSelectedListener;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -37,6 +38,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,11 +56,19 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	ArrivingTransport arrivingBus;
 	ArrayList<Double> lngList;
 	ArrayList<Double> latList;
+	 
+	private final String GPS_MENU_KEY = "gps_setting";
+	private final String TRAFFIC_MENU_KEY = "map_traffic";
+	private boolean gps_menu_setting;
+	private boolean traffic_menu_setting;
+	
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_time);
+        
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         
         routeDir = new LinkedHashMap<String, String>();
 		latList = new ArrayList<Double>();
@@ -84,7 +94,11 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	    	gMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag)).getMap();
 	    	if(gMap != null) {
 	    		gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-	    		gMap.setMyLocationEnabled(true);
+	    		
+	    		gps_menu_setting = sharedPref.getBoolean(GPS_MENU_KEY, true);
+	    		traffic_menu_setting = sharedPref.getBoolean(TRAFFIC_MENU_KEY, false);
+	    		gMap.setMyLocationEnabled(gps_menu_setting);
+	    		gMap.setTrafficEnabled(traffic_menu_setting);
 	    		//For setting the initial camera bounds for the map
 	    		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.36,-71.1), 10));
 	    		gMap.setOnMarkerClickListener(this);	 
@@ -92,8 +106,9 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            	getFeeds();	//this is for the buses  
 	            }
 	            if(arrivingBus.transportType.equalsIgnoreCase("Subway")) {
-	            	/*for(Transport train:arrivingBus.vehicles) 
-	            		createGpsMarker(train);//this is for trains*/
+	            	for(Transport train:arrivingBus.vehicles) 
+	            		createGpsMarker(train);//this is for trains
+	            		createStopMarker(arrivingBus);
 	            }
 	            if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
 	            	/*for(Transport train:arrivingBus.vehicles) 
@@ -102,11 +117,12 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	    	}
 	    }
         
-        
+         
 
 	}
     
-    public void getFeeds() {
+
+	public void getFeeds() {
         
         //Getting the routes data from the feed
         if(routeTag != null) {
@@ -152,7 +168,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		
 		protected void onPostExecute(ArrayList<Object> result) {
 			if(result != null) {
-				if(!result.isEmpty()) {
+				if(!result.isEmpty()) { 
 					Object resultArray[] = result.toArray();
 					for(int i = 0 ; i < result.size(); i++) {
 						Transport busInfo = (Transport) resultArray[i];
@@ -210,6 +226,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 							Point routePoint = routePointList.get(j);
 							pOptions.add(new LatLng(routePoint.lat, routePoint.lng));
 						}
+						pOptions.zIndex(-1);
 						Polyline busRoutePline = gMap.addPolyline(pOptions);
 						busRoutePline.setWidth(3);						
 						pOptions = new PolylineOptions();
@@ -234,23 +251,27 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	
 	//creates the gps marker
     //has an image that shows the direction of the bus using the heading
-	private void createGpsMarker(Transport busInfo) {	
-		LatLng point = new LatLng(busInfo.lat, busInfo.lng);
+	private void createGpsMarker(Transport transportInfo) {	
+		LatLng point = new LatLng(transportInfo.lat, transportInfo.lng);
 		MarkerOptions mOptions = new MarkerOptions();
 		mOptions.position(point);
-		mOptions.title("Last Reported: " +busInfo.secSinceReport +" seconds");
-		
-		if(busInfo.dirTag != null)
-			mOptions.snippet(busInfo.dirTag);
+		if(transportInfo.secSinceReport > 0) {
+			mOptions.title("GPS Position Last Reported: " +transportInfo.secSinceReport +" seconds"); 
+		}
+		else {
+			mOptions.title("GPS Position Last Reported: Not known");
+		}
+		if(transportInfo.dirTag != null)
+			mOptions.snippet(transportInfo.dirTag);
 		else 
 			mOptions.snippet("Not Reporting");
 		//rotating the bus according to the direction 
 		Bitmap bmpOriginal = BitmapFactory.decodeResource(this.getResources(), R.drawable.van_bus_icon);
 		Bitmap bmResult = Bitmap.createBitmap(bmpOriginal.getWidth(), bmpOriginal.getHeight(), Bitmap.Config.ARGB_8888);
 		Canvas tempCanvas = new Canvas(bmResult);
-		int rotationAngle = busInfo.heading - 90;
+		int rotationAngle = transportInfo.heading - 90;
 		//fliping the bus in case
-		if(busInfo.heading > 180) {
+		if(transportInfo.heading > 180) {
 			tempCanvas.scale(1.0f, -1.0f, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);
 		}
 		tempCanvas.rotate(rotationAngle, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);		
@@ -259,6 +280,12 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		gMap.addMarker(mOptions);
 	}
 
+	//Creates a stop marker for trains stops 
+    private void createStopMarker(ArrivingTransport trainStop) {    	
+    	gMap.addMarker(new MarkerOptions().position(new LatLng(trainStop.stopLat, trainStop.stopLng)).title(trainStop.stopTitle));    		
+	}
+	
+	
 	//Refresh the gps feed to check for the new location of the bus
 	public void refreshGpsFeed(View view) {
 		gMap.clear();

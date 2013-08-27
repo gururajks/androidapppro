@@ -7,7 +7,7 @@
         android:entries="@array/time_format_text"
         android:entryValues="@array/time_format_value"
         android:defaultValue="1"
-        android:summary="Predicted arrival time format" />
+        android:summary="Predicted arrival time format (If available)" />
     
     <PreferenceCategory 
         android:title="Map"

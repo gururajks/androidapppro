@@ -8,9 +8,9 @@
         android:id="@+id/bookmarkHint"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Bookmark your Bus Route" />
+        android:text="Favorites" />
     
-    <LinearLayout 
+    <!-- <LinearLayout 
         android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal">"
@@ -37,7 +37,7 @@
 	        android:paddingBottom="13dp"
 		    android:background="#E3E3D6"
 		     android:onClick="bookmarkbus"/>
-	</LinearLayout>
+	</LinearLayout> -->
 	<ListView 
     	android:layout_width="fill_parent"
     	android:layout_height="fill_parent" 

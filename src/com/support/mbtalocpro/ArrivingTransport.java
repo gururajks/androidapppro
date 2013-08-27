@@ -12,7 +12,9 @@ public class ArrivingTransport implements Serializable {
 	public String routeTitle;
 	public String transportType;
 	public String stopTag;
-	public String stopTitle; 
+	public String stopTitle;
+	public double stopLat;
+	public double stopLng;
 	public ArrayList<String> vehicleIds;
 	public ArrayList<Transport> vehicles;
 	
@@ -21,6 +23,6 @@ public class ArrivingTransport implements Serializable {
 		routeTag = new ArrayList<String>();
 		vehicleIds = new ArrayList<String>();
 		vehicles = new ArrayList<Transport>();
-	}
+	} 
 
 }

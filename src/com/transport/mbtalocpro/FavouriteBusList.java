@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.view.ContextMenu;
@@ -45,10 +46,9 @@ public class FavouriteBusList extends UrlConnector {
 	int BUSLIST = 1;
 	ArrayAdapter<String> favoritesAdapter;
 	ArrayList<FavoriteListItemObject> favoriteObjectList;
-	/*ArrayList<String> favBusRouteTags;
-	ArrayList<String> favBusDirectionTitle;
-	ArrayList<String> favBusDirectionTag;
-	ArrayList<String> favBusStopTags;*/
+	ProgressDialog progressDialog = null;
+	
+	
 	String mbtaTypes[] = new String[] {"Bus", "Subway", "Commuter Rail"}; 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) { 
@@ -73,17 +73,14 @@ public class FavouriteBusList extends UrlConnector {
 	//Displays the routes in the sql database
 	public void displayFavoriteRoutes() {
 		favBusRoutes = new ArrayList<String>();
-		/*favBusRouteTags = new ArrayList<String>();
-		favBusDirectionTitle = new ArrayList<String>();
-		favBusDirectionTag = new ArrayList<String>();
-		favBusStopTags = new ArrayList<String>();*/
+
 		favoriteObjectList = new ArrayList<FavoriteListItemObject>();
 		DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
 		Cursor favRoutes = dbManager.getAllData();
 		if(favRoutes != null && favRoutes.moveToFirst()) {			
 			do {
 				FavoriteListItemObject favoriteObjectListItem = new FavoriteListItemObject(); 
-				favBusRoutes.add("Route:"+favRoutes.getString(1) + "-" + favRoutes.getString(3) +"@" + favRoutes.getString(5));
+				favBusRoutes.add(favRoutes.getString(1) + "-" + favRoutes.getString(3) +"@" + favRoutes.getString(5));
 				favoriteObjectListItem.routeTitle = favRoutes.getString(1);
 				favoriteObjectListItem.routeTag = (favRoutes.getString(2));
 				favoriteObjectListItem.directionTitle = (favRoutes.getString(3));
@@ -108,9 +105,9 @@ public class FavouriteBusList extends UrlConnector {
 				choosenDirection = favoriteListItemObject.directionTitle;
 				String choosenDirectionTag = favoriteListItemObject.directionTag;				
 				choosenStop = favoriteListItemObject.stopTag;
-				
+				progressDialog = ProgressDialog.show(FavouriteBusList.this, "Loading...", "Getting Data");
 				//Bus Transportation predictions
-				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Bus")) {
+				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Bus")) { 
 					URL url;
 					try {			 
 						url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=mbta&s="+choosenStop+"&r="+choosenRouteTag);
@@ -183,6 +180,7 @@ public class FavouriteBusList extends UrlConnector {
 						arrivingBus.stopTitle = predictedRoute.stopTitle;
 						arrivingBus.stopTag = predictedRoute.stopTag;
 					}		
+					progressDialog.dismiss();
 					Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
 					intent.putExtra("arrivingBus", arrivingBus);
 					startActivity(intent);
@@ -210,6 +208,7 @@ public class FavouriteBusList extends UrlConnector {
 		}
 		
 		protected void onPostExecute(ArrivingTransport arrivingTransport) {
+			progressDialog.dismiss();
 			if(arrivingTransport != null) {
 				Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
 				intent.putExtra("arrivingBus", arrivingTransport);
@@ -238,6 +237,7 @@ public class FavouriteBusList extends UrlConnector {
 		}
 		
 		protected void onPostExecute(ArrivingTransport arrivingTransport) {
+			progressDialog.dismiss();
 			if(arrivingTransport != null) {
 				Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
 				intent.putExtra("arrivingBus", arrivingTransport);
@@ -296,10 +296,10 @@ public class FavouriteBusList extends UrlConnector {
 	
 	
 	
-	public void bookmarkbus(View view) {
+	/*public void bookmarkbus(View view) {
 		Intent intent = new Intent(this,MbtaBusList.class);
 		startActivityForResult(intent, BUSLIST);
-	}
+	}*/
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

@@ -77,18 +77,22 @@ public class CommuterRailParser {
 		for(int i = 0 ; i < trips.length(); i++) {
 			JSONObject trip = (JSONObject) trips.getJSONObject(i);
 			String destination = trip.getString("Destination");
-			String stop = trip.getString("Stop");			
+			String stop = trip.getString("Stop");			 
 			if(stop.equalsIgnoreCase(stopNames) && direction.equalsIgnoreCase(destination)) {
 				String scheduledEpochTime = trip.getString("Scheduled");
 				String timeStampEpochTime = trip.getString("TimeStamp");
+				String lateness = trip.getString("Lateness");
 				int scheduledMinutes = getMinutes(scheduledEpochTime, timeStampEpochTime);
-				arrivingTransport.minutes.add(scheduledMinutes);
+				int latenessValue = 0;
+				if(lateness != "") latenessValue = Integer.parseInt(lateness);				
+				arrivingTransport.minutes.add(scheduledMinutes + latenessValue);
 				arrivingTransport.routeTag.add(trainNo);
 				arrivingTransport.stopTitle = stop;
 				arrivingTransport.stopTag = stop;
 				arrivingTransport.direction = destination;
 				arrivingTransport.dirTag = destination;
 				Transport transport = new Transport();
+				
 				transport.id = Integer.parseInt(trip.getString("Vehicle"));
 				transport.lat = Double.parseDouble(trip.getString("Latitude"));
 				transport.lng = Double.parseDouble(trip.getString("Longitude"));

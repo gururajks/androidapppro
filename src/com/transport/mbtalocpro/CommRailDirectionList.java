@@ -24,6 +24,9 @@ import com.transport.mbtalocpro.BusStopsDialog.BusStopsDialogListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.app.DialogFragment;
@@ -44,6 +47,9 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 	String transportationType = null;
 	int BUSLIST = 1;
 	String destinationDirectionStop;
+	double stopLat;
+	double stopLng;
+	ProgressDialog progressDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,9 +108,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 						}
 						else if(transportationType.equalsIgnoreCase("Commuter Rail")) {	//station suffix is needed											
 							result.directionList.get(i).directionTag = destinationDirectionStop;
-						}
-						
-					
+						}					
 					} 
 				}
 				ListView listView = (ListView) findViewById(R.id.bus_dir_list);
@@ -160,7 +164,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
     		conn.setDoInput(true);
     		
     		//Starting the query
-    		conn.connect();
+    		conn.connect(); 
     		int responseCode = conn.getResponseCode();
     		System.out.println("The response is: " + responseCode);    		
     		is = conn.getInputStream();
@@ -182,6 +186,10 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 	@Override
 	public void onSelectStop(int index, String stopName) {
 		String stopId = choosenDirection.stopList.get(index).stopId;
+		stopLat = choosenDirection.stopList.get(index).stopLocation.lat;
+		stopLng = choosenDirection.stopList.get(index).stopLocation.lng;
+		progressDialog = ProgressDialog.show(this, "Loading...", "Getting Data");
+		progressDialog.setCancelable(true);
 		if (transportationType.equalsIgnoreCase("Subway")) {			
 			new SubwayPrediction().execute(stopId);
 		}
@@ -210,8 +218,11 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 		}
 		
 		protected void onPostExecute(ArrivingTransport arrivingTransport) {
+			progressDialog.dismiss();
 			if(arrivingTransport != null) {
 				Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
+				arrivingTransport.stopLat = stopLat;
+				arrivingTransport.stopLng = stopLng;
 				intent.putExtra("arrivingBus", arrivingTransport);
 				startActivity(intent);				
 			}
@@ -231,15 +242,17 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 				choosenDestinationDirectionStop = choosenDirection.stopList.get(lastStopIndex).stopTitle;				
 			}
 			
-			System.out.println("TRANSPORTATION: befo" + commRailTitle + params[0] + choosenDestinationDirectionStop);
 			CommuterRailParser commRailParser = new CommuterRailParser(commRailTitle, params[0], choosenDestinationDirectionStop);
 			commRailParser.parseCommuterRailInfo();
 			return commRailParser.getArrivingTransport();
 		}
 		
 		protected void onPostExecute(ArrivingTransport arrivingTransport) {
+			progressDialog.dismiss();
 			if(arrivingTransport != null) {
 				Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
+				arrivingTransport.stopLat = stopLat;
+				arrivingTransport.stopLng = stopLng;
 				intent.putExtra("arrivingBus", arrivingTransport);
 				startActivity(intent);				
 			}

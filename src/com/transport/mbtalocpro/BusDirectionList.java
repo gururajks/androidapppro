@@ -23,6 +23,7 @@ import com.transport.mbtalocpro.BusStopsDialog.BusStopsDialogListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.app.DialogFragment;
@@ -43,6 +44,7 @@ public class BusDirectionList extends UrlConnector implements BusStopsDialogList
 	String routeDir[][];
 	Route route = null;
 	Direction choosenDirection = null;
+	ProgressDialog progressDialog;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -150,6 +152,8 @@ public class BusDirectionList extends UrlConnector implements BusStopsDialogList
 		if(route != null && choosenDirection != null) {
 			String choosenStop = choosenDirection.stopList.get(item).stopTag;
 			String choosenRoute = route.routeTag;
+			progressDialog = ProgressDialog.show(this, "Loading...", "Getting Data");
+			progressDialog.setCancelable(true);
 			URL url;
 			try {			
 				url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=mbta&s="+choosenStop+"&r="+choosenRoute);
@@ -171,6 +175,7 @@ public class BusDirectionList extends UrlConnector implements BusStopsDialogList
             }
 			return null;
 		}		
+		
 		
 		protected void onPostExecute(ArrayList<Object> result) {
 			if(result != null) {
@@ -198,6 +203,7 @@ public class BusDirectionList extends UrlConnector implements BusStopsDialogList
 						arrivingBus.stopTitle = predictedRoute.stopTitle;
 						arrivingBus.stopTag = predictedRoute.stopTag;
 					}					
+					progressDialog.dismiss();
 					Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
 					intent.putExtra("arrivingBus", arrivingBus);
 					startActivity(intent);

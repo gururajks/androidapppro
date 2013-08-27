@@ -94,11 +94,11 @@ public class SubwayJsonParser {
 					JSONObject prediction = (JSONObject) predictions.get(j);
 					if(prediction.getString("StopID").equalsIgnoreCase(stopNames)) {
 						arrivingTransport.stopTitle = prediction.getString("Stop");
+						arrivingTransport.stopTag = stopNames;
 						int seconds = prediction.getInt("Seconds");
 						int minutes = (int) Math.ceil(seconds/60);
 						arrivingTransport.minutes.add(minutes);
-						arrivingTransport.routeTag.add(trainNo);	
-						System.out.println("Trano" + trainNo);
+						arrivingTransport.routeTag.add(trainNo);
 					}
 				}
 			}

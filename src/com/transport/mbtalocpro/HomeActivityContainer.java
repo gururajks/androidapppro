@@ -21,9 +21,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.support.mbtalocpro.ArrivingTransport;
+import com.support.mbtalocpro.CommuterRailParser;
 import com.support.mbtalocpro.DirectionPrediction;
 import com.support.mbtalocpro.Prediction;
 import com.support.mbtalocpro.RoutePrediction;
+import com.support.mbtalocpro.SubwayJsonParser;
 import com.support.mbtalocpro.Transport;
 import com.support.mbtalocpro.Direction;
 import com.support.mbtalocpro.Path;
@@ -323,17 +325,19 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			finish();
 		}
 		if(item.getItemId() == R.id.refresh_menu) {
+			if(gMap != null) gMap.clear();
 			if(arrivingBus.transportType.equalsIgnoreCase("Bus")) {
-				downloadBusPredictions();	
-			} 
+				downloadBusPredictions();
+				getFeeds();		//feeds are exclusive for bus predictions only
+			}  
 			if(arrivingBus.transportType.equalsIgnoreCase("Subway")) {
-				
+				new SubwayPrediction().execute(arrivingBus.stopTag);
 			}
 			if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
-				
+				new CommuterRailPrediction().execute(arrivingBus.stopTag);
 			}
-			if(gMap != null) gMap.clear();
-			getFeeds();
+			
+			
 		}
 		return super.onMenuItemSelected(featureId, item);		
 	}
@@ -397,6 +401,48 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		}	 
 	}  
 	
+	/*
+	 * Subway prediction with parsing of the subway information provided by the Subway 2.0
+	 */
+	class SubwayPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
+		
+		protected ArrivingTransport doInBackground(String... params) {
+			SubwayJsonParser subwayParser = new SubwayJsonParser(arrivingBus.routeTitle, params[0], arrivingBus.direction);
+			subwayParser.parseSubwayInfo();
+			return subwayParser.getArrivingTransport(); 
+		}
+		
+		protected void onPostExecute(ArrivingTransport arrivingTransport) {
+			if(arrivingTransport != null) {				
+				arrivingTransport.stopLat = arrivingBus.stopLat;
+				arrivingTransport.stopLng = arrivingBus.stopLng;
+				populateFragments(arrivingTransport);				
+			}
+		}		 
+	}
+	
+	/*
+	 * Commuter Rail prediction with there JSON feed
+	 */
+	class CommuterRailPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
+
+		@Override
+		protected ArrivingTransport doInBackground(String... params) {		
+			CommuterRailParser commRailParser = new CommuterRailParser(arrivingBus.routeTitle, params[0], arrivingBus.direction);
+			commRailParser.parseCommuterRailInfo();
+			return commRailParser.getArrivingTransport();
+		}
+		
+		protected void onPostExecute(ArrivingTransport arrivingTransport) {
+			if(arrivingTransport != null) {				
+				arrivingTransport.stopLat = arrivingBus.stopLat;
+				arrivingTransport.stopLng = arrivingBus.stopLng;
+				populateFragments(arrivingTransport);
+			}
+		}	
+		
+	}
+
 	
 	
 	@Override

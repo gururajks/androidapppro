@@ -10,28 +10,55 @@
     <ImageButton
         android:id="@+id/pinImage"
         android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
         android:src="@drawable/ic_9_av_make_available_offline"
         android:layout_width="wrap_content"
         android:focusableInTouchMode="false"
         android:layout_height="match_parent"/>
     
-    <TextView
-        android:id="@+id/favBusItem"
+    <RelativeLayout 
         android:layout_toRightOf="@+id/pinImage"
         android:layout_toLeftOf="@+id/imgborder"
         android:layout_centerVertical="true"
-        android:textSize="12sp"
         android:layout_height="match_parent"
-        android:layout_width="wrap_content"  
-        android:textColor="#000000">        
-    </TextView>
+        android:layout_width="wrap_content"
+        android:padding="5dp">
+    	
+        <TextView 
+            android:id="@+id/favRouteName"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:textColor="#0099CC" />
+        
+        <TextView
+	        android:id="@+id/favDirectionItem"
+	        android:layout_below="@+id/favRouteName"
+	        android:layout_alignLeft="@+id/favRouteName"
+	        android:textSize="12sp"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"  
+	        android:textColor="#000000" />
+                
+        <TextView 
+            android:id="@+id/favStopName"
+            android:layout_below="@+id/favDirectionItem"
+            android:layout_alignLeft="@+id/favRouteName"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000" />
+    
+    </RelativeLayout>
+    
     
     <LinearLayout android:id="@+id/imgborder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="3dip"
+        android:padding="5dip"
         android:layout_centerVertical="true"
-        android:background="@drawable/image_bg"
         android:layout_alignParentRight="true">
 	    <ImageView
 	        android:id="@+id/transpoImage"	        

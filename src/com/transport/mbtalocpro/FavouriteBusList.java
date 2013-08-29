@@ -85,15 +85,16 @@ public class FavouriteBusList extends UrlConnector {
 				favoriteObjectListItem.routeTag = (favRoutes.getString(2));
 				favoriteObjectListItem.directionTitle = (favRoutes.getString(3));
 				favoriteObjectListItem.directionTag = (favRoutes.getString(4)); 
+				favoriteObjectListItem.stopTitle = (favRoutes.getString(5));
 				favoriteObjectListItem.stopTag = (favRoutes.getString(6));
 				favoriteObjectListItem.transportationType = favRoutes.getString(8);
 				favoriteObjectList.add(favoriteObjectListItem);
 			} while(favRoutes.moveToNext());			
 		}
-		 
-		ListView listView = (ListView) findViewById(R.id.fav_bus_list);
-		favoritesAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.fav_item, R.id.favBusItem, favBusRoutes);
-		
+		  
+		ListView listView = (ListView) findViewById(R.id.fav_bus_list);		
+		FavoriteListAdapter favoritesAdapter = new FavoriteListAdapter(getApplicationContext(), favoriteObjectList);
+				
 		listView.setAdapter(favoritesAdapter); 
 		
 		//Touch event on the favorite pane

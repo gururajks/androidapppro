@@ -8,7 +8,7 @@ public class FavoriteListItemObject {
 	public String directionTag;
 	public String directionTitle;
 	public String stopTag;
-	
+	public String stopTitle;
 	
 	public ArrivingTransport arrivingTransport;
 	

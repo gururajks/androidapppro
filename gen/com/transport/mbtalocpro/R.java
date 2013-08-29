@@ -198,13 +198,14 @@ containing a value of this type.
         public static final int ic_9_av_make_available_offline=0x7f020024;
         public static final int ic_9_av_make_available_offline_wh=0x7f020025;
         public static final int ic_bus=0x7f020026;
-        public static final int ic_device_access_time=0x7f020027;
-        public static final int ic_launcher=0x7f020028;
-        public static final int ic_launcher_new=0x7f020029;
-        public static final int ic_maps_icon=0x7f02002a;
-        public static final int ic_repair=0x7f02002b;
-        public static final int image_bg=0x7f02002c;
-        public static final int van_bus_icon=0x7f02002d;
+        public static final int ic_device_access_camera=0x7f020027;
+        public static final int ic_device_access_time=0x7f020028;
+        public static final int ic_launcher=0x7f020029;
+        public static final int ic_launcher_new=0x7f02002a;
+        public static final int ic_maps_icon=0x7f02002b;
+        public static final int ic_repair=0x7f02002c;
+        public static final int image_bg=0x7f02002d;
+        public static final int van_bus_icon=0x7f02002e;
     }
     public static final class id {
         public static final int addtofav=0x7f06001d;

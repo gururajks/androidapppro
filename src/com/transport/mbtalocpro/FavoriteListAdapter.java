@@ -58,6 +58,9 @@ public class FavoriteListAdapter extends BaseAdapter {
 		if(favoriteListItemObject.transportationType.equalsIgnoreCase("Bus")) {
 			transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_bus));
 		}
+		if(favoriteListItemObject.transportationType.equalsIgnoreCase("Commuter Rail")) {
+			transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_trains));
+		}
 		
 		
 		

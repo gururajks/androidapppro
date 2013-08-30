@@ -25,6 +25,7 @@ import com.support.mbtalocpro.CommuterRailParser;
 import com.support.mbtalocpro.DirectionPrediction;
 import com.support.mbtalocpro.Prediction;
 import com.support.mbtalocpro.RoutePrediction;
+import com.support.mbtalocpro.ShapeInfoDbManager;
 import com.support.mbtalocpro.SubwayJsonParser;
 import com.support.mbtalocpro.Transport;
 import com.support.mbtalocpro.Direction;
@@ -36,6 +37,7 @@ import com.transport.mbtalocpro.PredictionTimeFragment.PredictedTimeFragmentItem
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -98,7 +100,15 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         		routeTag = arrivingBus.routeTag.get(0);        		
         	}
         }        
-        
+        /*ShapeInfoDbManager dbManager = new ShapeInfoDbManager(getApplicationContext());
+		Cursor dbCursor = dbManager.getShapeInfo("933_0002");
+		if(dbCursor != null && dbCursor.moveToFirst()) {			
+			do {
+				System.out.println(dbCursor.getDouble(2));	            				
+			}
+			while(dbCursor.moveToNext());
+		}
+		dbManager.closeDb();*/
         //map part 
         if(gMap == null) {
 	    	gMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag)).getMap();
@@ -116,9 +126,12 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            	getFeeds();	//this is for the buses  
 	            }
 	            if(arrivingBus.transportType.equalsIgnoreCase("Subway")) {
-	            	for(Transport train:arrivingBus.vehicles) 
+	            	for(Transport train:arrivingBus.vehicles) {
 	            		createGpsMarker(train);//this is for trains
-	            		createStopMarker(arrivingBus);
+	            	}
+	            		
+	            	createStopMarker(arrivingBus);
+            			            		
 	            }
 	            if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
 	            	/*for(Transport train:arrivingBus.vehicles) 

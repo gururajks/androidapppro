@@ -14,7 +14,7 @@ public class DatabaseManager {
 		DatabaseHelper helper = new DatabaseHelper(context, DATABASE_NAME, null, 7);
 		database = helper.getWritableDatabase();		
 	}
-	
+	 
 	public void saveData(String routeNo, String routeTag, 
 		String dirTitle, String dirTag, String stopTitle, String stopTag, int listPosition, String transportationType) {
 		ContentValues contentValues = new ContentValues();

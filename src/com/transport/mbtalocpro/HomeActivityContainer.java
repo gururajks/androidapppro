@@ -100,15 +100,15 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         		routeTag = arrivingBus.routeTag.get(0);        		
         	}
         }        
-        /*ShapeInfoDbManager dbManager = new ShapeInfoDbManager(getApplicationContext());
-		Cursor dbCursor = dbManager.getShapeInfo("933_0002");
+        ShapeInfoDbManager dbManager = new ShapeInfoDbManager(getApplicationContext());
+		Cursor dbCursor = dbManager.getShapeInfo("946_0001");
 		if(dbCursor != null && dbCursor.moveToFirst()) {			
 			do {
-				System.out.println(dbCursor.getDouble(2));	            				
+				System.out.println("lat:" + dbCursor.getDouble(dbCursor.getColumnIndex("shape_lon")));	            				
 			}
 			while(dbCursor.moveToNext());
 		}
-		dbManager.closeDb();*/
+		dbManager.closeDb(); 
         //map part 
         if(gMap == null) {
 	    	gMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag)).getMap();

@@ -10,12 +10,12 @@ public class ShapeInfoDbManager {
 	public final String DATABASE_NAME = "mbtaprobusbookmark.db";
 	
 	public ShapeInfoDbManager(Context context) {
-		ShapeInfoDbHelper helper = new ShapeInfoDbHelper(context, DATABASE_NAME, null, 2);
-		database = helper.getReadableDatabase();		
+		ShapeInfoDbHelper helper = new ShapeInfoDbHelper(context, DATABASE_NAME, null, 7);
+		database = helper.getWritableDatabase();		
 	}
 	
 	public Cursor getShapeInfo(String shape_id) {
-		return database.rawQuery("SELECT shape_lat, shape_lat FROM " + shapeTableName + " WHERE shape_id='" + shape_id + "'", null);
+		return database.rawQuery("SELECT * FROM " + shapeTableName + " WHERE shape_id='" + shape_id + "'", null);
 	}
 	
 	public void closeDb() {

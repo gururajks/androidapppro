@@ -11,7 +11,7 @@ public class DatabaseManager {
 	public final String DATABASE_NAME = "mbtaprobusbookmark.db";
 	
 	public DatabaseManager(Context context) {
-		DatabaseHelper helper = new DatabaseHelper(context, DATABASE_NAME, null, 7);
+		DatabaseHelper helper = new DatabaseHelper(context, DATABASE_NAME, null, 8);
 		database = helper.getWritableDatabase();		
 	}
 	 
@@ -47,6 +47,11 @@ public class DatabaseManager {
 	public Cursor getAllData() {
 		return database.rawQuery("SELECT * FROM " + tableName, null);
 	}
+	
+	
+	
+	
+	
 	
 	public void closeDb() {
 		database.close();

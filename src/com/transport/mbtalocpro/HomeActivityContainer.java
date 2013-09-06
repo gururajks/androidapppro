@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.support.mbtalocpro.AppConstants;
 import com.support.mbtalocpro.ArrivingTransport;
 import com.support.mbtalocpro.CommuterRailParser;
 import com.support.mbtalocpro.DirectionPrediction;
@@ -99,16 +100,10 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         	if(!arrivingBus.routeTag.isEmpty()) {
         		routeTag = arrivingBus.routeTag.get(0);        		
         	}
-        }        
-        ShapeInfoDbManager dbManager = new ShapeInfoDbManager(getApplicationContext());
-		Cursor dbCursor = dbManager.getShapeInfo("946_0001");
-		if(dbCursor != null && dbCursor.moveToFirst()) {			
-			do {
-				System.out.println("lat:" + dbCursor.getDouble(dbCursor.getColumnIndex("shape_lon")));	            				
-			}
-			while(dbCursor.moveToNext());
-		}
-		dbManager.closeDb(); 
+        }
+        
+    	displayTrainRouteLines(routeTag);
+    	
         //map part 
         if(gMap == null) {
 	    	gMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag)).getMap();
@@ -128,19 +123,22 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            if(arrivingBus.transportType.equalsIgnoreCase("Subway")) {
 	            	for(Transport train:arrivingBus.vehicles) {
 	            		createGpsMarker(train);//this is for trains
-	            	}
-	            		
+	            	}	            		
 	            	createStopMarker(arrivingBus);
+
             			            		
 	            }
 	            if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
 	            	/*for(Transport train:arrivingBus.vehicles) 
 	            		createGpsMarker(train);//this is for trains*/
 	            }
-	    	}
-	    }
-    }
+	    	} 
+	    } 
+    } 
     
+    public void displayTrainRouteLines(String routeTag) {
+    	
+    }
 
 	public void getFeeds() {
         

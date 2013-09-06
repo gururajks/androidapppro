@@ -10,7 +10,7 @@ public class ShapeInfoDbManager {
 	public final String DATABASE_NAME = "mbtaprobusbookmark.db";
 	
 	public ShapeInfoDbManager(Context context) {
-		ShapeInfoDbHelper helper = new ShapeInfoDbHelper(context, DATABASE_NAME, null, 7);
+		ShapeInfoDbHelper helper = new ShapeInfoDbHelper(context, DATABASE_NAME, null, 8);
 		database = helper.getWritableDatabase();		
 	}
 	

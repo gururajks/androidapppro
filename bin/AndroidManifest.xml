@@ -31,6 +31,10 @@
             android:label="Predictions" >
         </activity>
 
+        <service 
+            android:name=".DatabaseQueryService">
+            
+        </service>
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyALvlkNPkiMbwq5IRFHnwZhMBv90XpEWKw" />

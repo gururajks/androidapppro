@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.support.mbtalocpro.AppConstants;
 import com.support.mbtalocpro.ArrivingTransport;
 import com.support.mbtalocpro.CommuterRailParser;
+import com.support.mbtalocpro.DatabaseQueryService;
 import com.support.mbtalocpro.DirectionPrediction;
 import com.support.mbtalocpro.Prediction;
 import com.support.mbtalocpro.RoutePrediction;
@@ -102,8 +103,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         	}
         }
         
-    	displayTrainRouteLines(routeTag);
-    	
+    	    
         //map part 
         if(gMap == null) {
 	    	gMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag)).getMap();
@@ -125,8 +125,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            		createGpsMarker(train);//this is for trains
 	            	}	            		
 	            	createStopMarker(arrivingBus);
-
-            			            		
+	            	        			            		
 	            }
 	            if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
 	            	/*for(Transport train:arrivingBus.vehicles) 
@@ -137,7 +136,9 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
     } 
     
     public void displayTrainRouteLines(String routeTag) {
-    	
+    	Intent intent = new Intent(this, DatabaseQueryService.class);
+    	intent.putExtra(DatabaseQueryService.INCOMING_INTENT,routeTag);
+    	startService(intent);	
     }
 
 	public void getFeeds() {
@@ -346,9 +347,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			}
 			if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
 				new CommuterRailPrediction().execute(arrivingBus.stopTag);
-			}
-			
-			
+			}			
 		}
 		return super.onMenuItemSelected(featureId, item);		
 	}
@@ -510,7 +509,9 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		}
 	}
 
-    
+    /*
+     * Broadcast receiver for maps data coming in
+     */
       
 	
 	

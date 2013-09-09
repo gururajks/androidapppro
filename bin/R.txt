@@ -73,8 +73,9 @@ int drawable ic_launcher 0x7f020029
 int drawable ic_launcher_new 0x7f02002a
 int drawable ic_maps_icon 0x7f02002b
 int drawable ic_repair 0x7f02002c
-int drawable image_bg 0x7f02002d
-int drawable van_bus_icon 0x7f02002e
+int drawable ic_trains 0x7f02002d
+int drawable image_bg 0x7f02002e
+int drawable van_bus_icon 0x7f02002f
 int id addtofav 0x7f06001d
 int id bookmarkHint 0x7f060006
 int id busImg1 0x7f06000d

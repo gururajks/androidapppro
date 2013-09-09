@@ -32,7 +32,8 @@
         </activity>
 
         <service 
-            android:name=".DatabaseQueryService">
+            android:name=".DatabaseQueryService"
+            android:enabled="true">
             
         </service>
         <meta-data

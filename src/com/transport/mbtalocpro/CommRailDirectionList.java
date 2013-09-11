@@ -212,7 +212,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 				choosenDestinationDirectionStopStripped = tempStringArray[0];
 			}
 			
-			SubwayJsonParser subwayParser = new SubwayJsonParser(commRailTitle, params[0], choosenDestinationDirectionStopStripped);
+			SubwayJsonParser subwayParser = new SubwayJsonParser(commRailTag, params[0], choosenDestinationDirectionStopStripped, commRailTitle);
 			subwayParser.parseSubwayInfo();
 			return subwayParser.getArrivingTransport();
 		}
@@ -242,7 +242,7 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 				choosenDestinationDirectionStop = choosenDirection.stopList.get(lastStopIndex).stopTitle;				
 			}
 			
-			CommuterRailParser commRailParser = new CommuterRailParser(commRailTitle, params[0], choosenDestinationDirectionStop);
+			CommuterRailParser commRailParser = new CommuterRailParser(commRailTag, params[0], choosenDestinationDirectionStop, commRailTitle);
 			commRailParser.parseCommuterRailInfo();
 			return commRailParser.getArrivingTransport();
 		}

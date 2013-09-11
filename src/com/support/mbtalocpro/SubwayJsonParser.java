@@ -21,15 +21,17 @@ public class SubwayJsonParser {
 	String stopNames;
 	String direction;
 	ArrivingTransport arrivingTransport;
+	String trainTitle;
 	
-	public SubwayJsonParser(String trainNo, String stopNames, String direction) {
+	public SubwayJsonParser(String trainNo, String stopNames, String direction, String trainTitle) {
 		this.trainNo = trainNo;
 		this.stopNames = stopNames;
 		this.direction = direction;
+		this.trainTitle = trainTitle;
 	}
 	
 	public void parseSubwayInfo() {
-		String train[] = trainNo.split(" ");
+		String train[] = trainTitle.split(" ");
 		URL url;
 		InputStream is = null;
 		try {

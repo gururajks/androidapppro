@@ -19,11 +19,13 @@ public class CommuterRailParser {
 	String stopNames;
 	String direction;
 	ArrivingTransport arrivingTransport;
+	String trainTitle;
 	
-	public CommuterRailParser(String trainNo, String stopNames, String direction) {
+	public CommuterRailParser(String trainNo, String stopNames, String direction, String trainTitle) {
 		this.trainNo = trainNo;
 		this.stopNames = stopNames;
 		this.direction = direction;
+		this.trainTitle = trainTitle;
 	}
 	
 	public void parseCommuterRailInfo() {
@@ -31,7 +33,7 @@ public class CommuterRailParser {
 		URL url;
 		InputStream is = null;
 		try {
-			int indexOfTrainName = commRailMap.indexOf(trainNo);
+			int indexOfTrainName = commRailMap.indexOf(trainTitle);
 			if(indexOfTrainName > 0) {			//Validity of the index 
 				url = new URL("http://developer.mbta.com/lib/RTCR/RailLine_" + indexOfTrainName + ".json");
 				is = getJsonFeed(url);
@@ -70,7 +72,7 @@ public class CommuterRailParser {
 	private void parseJson(InputStream is) throws IOException, NullPointerException, JSONException, NumberFormatException {
 		String jsonString = getStringFromStream(is);	
 		arrivingTransport = new ArrivingTransport();		
-		arrivingTransport.routeTitle = trainNo;
+		arrivingTransport.routeTitle = trainTitle;
 		arrivingTransport.transportType = "Commuter Rail";	
 		JSONObject json = new JSONObject(jsonString);	
 		JSONArray trips = json.getJSONArray("Messages");
@@ -78,6 +80,7 @@ public class CommuterRailParser {
 			JSONObject trip = (JSONObject) trips.getJSONObject(i);
 			String destination = trip.getString("Destination");
 			String stop = trip.getString("Stop");			 
+			System.out.println("stop" + stop + " stopNames" + stopNames + direction + destination);
 			if(stop.equalsIgnoreCase(stopNames) && direction.equalsIgnoreCase(destination)) {
 				String scheduledEpochTime = trip.getString("Scheduled");
 				String timeStampEpochTime = trip.getString("TimeStamp");

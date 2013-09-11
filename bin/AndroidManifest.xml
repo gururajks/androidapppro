@@ -32,10 +32,8 @@
         </activity>
 
         <service 
-            android:name=".DatabaseQueryService"
-            android:enabled="true">
+            android:name="com.support.mbtalocpro.DatabaseQueryService" />
             
-        </service>
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyALvlkNPkiMbwq5IRFHnwZhMBv90XpEWKw" />

@@ -120,13 +120,13 @@ public class FavouriteBusList extends UrlConnector {
 				
 				//Subway Transportation predictions 
 				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Subway")) {
-					new DownloadSubwayPredictions().execute(choosenRouteTitle, choosenDirectionTag, choosenStop);
+					new DownloadSubwayPredictions().execute(choosenRouteTitle, choosenDirectionTag, choosenStop, choosenRouteTag);
 				}
 				
 				//Commuter Rail Predictions 
 				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Commuter Rail")) {
 					System.out.println("TRANSPORTATION: Fav" + choosenRouteTitle + choosenStop + choosenDirectionTag);
-					new DownloadCommuterRailPredictions().execute(choosenRouteTitle, choosenDirectionTag, choosenStop);
+					new DownloadCommuterRailPredictions().execute(choosenRouteTitle, choosenDirectionTag, choosenStop, choosenRouteTag);
 				}
 			}
 		});
@@ -202,7 +202,7 @@ public class FavouriteBusList extends UrlConnector {
 		protected ArrivingTransport doInBackground(String... params) {
 			
 			
-			SubwayJsonParser subwayParser = new SubwayJsonParser(params[0], params[2], params[1]);
+			SubwayJsonParser subwayParser = new SubwayJsonParser(params[3], params[2], params[1], params[0]);
 			subwayParser.parseSubwayInfo();
 			return subwayParser.getArrivingTransport();
 			
@@ -232,7 +232,7 @@ public class FavouriteBusList extends UrlConnector {
 				choosenDestinationDirectionStop = choosenDirection.stopList.get(lastStopIndex).stopTitle;				
 			}*/
 			
-			CommuterRailParser commRailParser = new CommuterRailParser(params[0], params[2], params[1]);
+			CommuterRailParser commRailParser = new CommuterRailParser(params[3], params[2], params[1], params[0]);
 			commRailParser.parseCommuterRailInfo();
 			return commRailParser.getArrivingTransport(); 			
 		}

@@ -103,7 +103,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         	}
         }
         
-    	    
+        displayTrainRouteLines(arrivingBus.routeTag.get(0));   
         //map part 
         if(gMap == null) {
 	    	gMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag)).getMap();
@@ -417,7 +417,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	class SubwayPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
 		
 		protected ArrivingTransport doInBackground(String... params) {
-			SubwayJsonParser subwayParser = new SubwayJsonParser(arrivingBus.routeTitle, params[0], arrivingBus.direction);
+			SubwayJsonParser subwayParser = new SubwayJsonParser(arrivingBus.routeTag.get(0) , params[0], arrivingBus.direction, arrivingBus.routeTitle);
 			subwayParser.parseSubwayInfo();
 			return subwayParser.getArrivingTransport(); 
 		}
@@ -437,8 +437,8 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	class CommuterRailPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
 
 		@Override
-		protected ArrivingTransport doInBackground(String... params) {		
-			CommuterRailParser commRailParser = new CommuterRailParser(arrivingBus.routeTitle, params[0], arrivingBus.direction);
+		protected ArrivingTransport doInBackground(String... params) {		 
+			CommuterRailParser commRailParser = new CommuterRailParser(arrivingBus.routeTag.get(0), params[0], arrivingBus.direction, arrivingBus.routeTitle);
 			commRailParser.parseCommuterRailInfo();
 			return commRailParser.getArrivingTransport();
 		}

@@ -103,7 +103,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         	}
         }
         
-        displayTrainRouteLines(routeTag);   
+        
         //map part 
         if(gMap == null) {
 	    	gMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag)).getMap();
@@ -125,11 +125,12 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            		createGpsMarker(train);//this is for trains
 	            	}	            		
 	            	createStopMarker(arrivingBus);
-	            	        			            		
+	            	displayTrainRouteLines(routeTag);           			            		
 	            }
 	            if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
 	            	/*for(Transport train:arrivingBus.vehicles) 
 	            		createGpsMarker(train);//this is for trains*/
+	            	displayTrainRouteLines(routeTag);   
 	            }
 	    	} 
 	    } 

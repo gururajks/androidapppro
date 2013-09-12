@@ -143,10 +143,6 @@ public class FavouriteBusList extends UrlConnector {
  
 		dbManager.closeDb();
 		
-		//Insert shapes data through intent service 
-		Intent intent = new Intent(this, DatabaseQueryService.class);
-    	intent.putExtra(DatabaseQueryService.INCOMING_INTENT,"");
-    	startService(intent);	
 	}
 	
 	/* Private classes for predictions - Bus*/	

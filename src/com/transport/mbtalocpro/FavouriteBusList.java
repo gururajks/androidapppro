@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.support.mbtalocpro.ArrivingTransport;
 import com.support.mbtalocpro.CommuterRailParser;
 import com.support.mbtalocpro.DatabaseManager;
+import com.support.mbtalocpro.DatabaseQueryService;
 import com.support.mbtalocpro.DirectionPrediction;
 import com.support.mbtalocpro.FavoriteListItemObject;
 import com.support.mbtalocpro.Prediction;
@@ -74,9 +75,8 @@ public class FavouriteBusList extends UrlConnector {
 	//Displays the routes in the sql database
 	public void displayFavoriteRoutes() {
 		favBusRoutes = new ArrayList<String>();
-
 		favoriteObjectList = new ArrayList<FavoriteListItemObject>();
-		DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
+		DatabaseManager dbManager = new DatabaseManager(this);
 		Cursor favRoutes = dbManager.getAllData();
 		if(favRoutes != null && favRoutes.moveToFirst()) {			
 			do {
@@ -143,6 +143,10 @@ public class FavouriteBusList extends UrlConnector {
  
 		dbManager.closeDb();
 		
+		//Insert shapes data through intent service 
+		Intent intent = new Intent(this, DatabaseQueryService.class);
+    	intent.putExtra(DatabaseQueryService.INCOMING_INTENT,"");
+    	startService(intent);	
 	}
 	
 	/* Private classes for predictions - Bus*/	

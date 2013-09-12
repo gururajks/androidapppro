@@ -23,49 +23,10 @@ public class ShapeInfoDbHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase database) {
-		database.execSQL("CREATE TABLE if not exists " + shapeTableName + 
-				" (id INTEGER PRIMARY KEY, " +
-				   "shape_id TEXT, " +
-				   "shape_lat REAL, " +
-				   "shape_lon REAL)");	
+		
+	}
+
 	
-		insertValues(database);
-	}
-
-	private void insertValues(SQLiteDatabase database) {
-		if(context!= null) {
-			try {
-				InputStream csvStream = context.getAssets().open("shapes.csv");
-				BufferedReader buffReader = new BufferedReader(new InputStreamReader(csvStream));
-				String line;
-				while((line = buffReader.readLine()) != null) {
-					System.out.println(line);
-					ContentValues dbValues = processString(line);
-					database.insert(shapeTableName, null, dbValues);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}		
-	}
-
-	private ContentValues processString(String line) {
-		String[] stringItems = line.split(",");
-		ContentValues contentValues = new ContentValues();
-		for(int i = 0 ; i < stringItems.length; i++) {
-			String stringItem = stringItems[i];			
-			if(i == 0) {
-				contentValues.put("shape_id", stringItem);
-			}										
-			if(i == 1) {
-				contentValues.put("shape_lat", Double.parseDouble(stringItem));
-			}
-			if(i == 2) {
-				contentValues.put("shape_lon", Double.parseDouble(stringItem));
-			}							
-		}
-		return contentValues;		
-	}
 	
 
 	@Override

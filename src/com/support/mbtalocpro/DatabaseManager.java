@@ -9,6 +9,7 @@ public class DatabaseManager {
 	String tableName = "checkboxState";
 	private SQLiteDatabase database;
 	public final String DATABASE_NAME = "mbtaprobusbookmark.db";
+	public String shapeTableName = "shapeInfo";
 	
 	public DatabaseManager(Context context) {
 		DatabaseHelper helper = new DatabaseHelper(context, DATABASE_NAME, null, AppConstants.DATABASE_VERSION);
@@ -47,7 +48,10 @@ public class DatabaseManager {
 	public Cursor getAllData() {
 		return database.rawQuery("SELECT * FROM " + tableName, null);
 	}
-	
+		
+	public Cursor getShapeInfo(String shape_id) {
+		return database.rawQuery("SELECT * FROM " + shapeTableName + " WHERE shape_id='" + shape_id + "'", null);
+	}
 	
 	
 	

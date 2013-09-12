@@ -11,7 +11,7 @@ public class DatabaseManager {
 	public final String DATABASE_NAME = "mbtaprobusbookmark.db";
 	
 	public DatabaseManager(Context context) {
-		DatabaseHelper helper = new DatabaseHelper(context, DATABASE_NAME, null, 8);
+		DatabaseHelper helper = new DatabaseHelper(context, DATABASE_NAME, null, AppConstants.DATABASE_VERSION);
 		database = helper.getWritableDatabase();		
 	}
 	 

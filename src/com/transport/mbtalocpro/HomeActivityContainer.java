@@ -103,7 +103,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         	}
         }
         
-        displayTrainRouteLines(arrivingBus.routeTag.get(0));   
+        displayTrainRouteLines(routeTag);   
         //map part 
         if(gMap == null) {
 	    	gMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag)).getMap();

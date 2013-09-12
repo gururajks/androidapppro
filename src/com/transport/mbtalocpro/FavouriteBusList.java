@@ -12,6 +12,7 @@ import com.support.mbtalocpro.DirectionPrediction;
 import com.support.mbtalocpro.FavoriteListItemObject;
 import com.support.mbtalocpro.Prediction;
 import com.support.mbtalocpro.RoutePrediction;
+import com.support.mbtalocpro.ShapeInfoDbManager;
 import com.support.mbtalocpro.SubwayJsonParser;
 
 
@@ -137,10 +138,11 @@ public class FavouriteBusList extends UrlConnector {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 				registerForContextMenu(parent);
 				return false;
-			}
+			} 
 		});
  
 		dbManager.closeDb();
+		
 	}
 	
 	/* Private classes for predictions - Bus*/	

@@ -39,7 +39,6 @@ public class ShapeInfoDbHelper extends SQLiteOpenHelper {
 				BufferedReader buffReader = new BufferedReader(new InputStreamReader(csvStream));
 				String line;
 				while((line = buffReader.readLine()) != null) {
-					System.out.println(line);
 					ContentValues dbValues = processString(line);
 					database.insert(shapeTableName, null, dbValues);
 				}

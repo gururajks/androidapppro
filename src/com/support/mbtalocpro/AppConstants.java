@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 public class AppConstants {
 	
 	public final static String API_KEY ="wX9NwuHnZU2ToO7GmGR9uw";
-	public final static int DATABASE_VERSION = 13;
+	public final static int DATABASE_VERSION = 17;
 	
 	
 	public final static ArrayList<String> COMMUTER_RAIL_TRAINS() {

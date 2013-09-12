@@ -9,10 +9,7 @@ public class ShapeInfoDbManager {
 	private SQLiteDatabase database;
 	public final String DATABASE_NAME = "mbtaprobusbookmark.db";
 	
-	public ShapeInfoDbManager(Context context) {
-		ShapeInfoDbHelper helper = new ShapeInfoDbHelper(context, DATABASE_NAME, null, AppConstants.DATABASE_VERSION);
-		database = helper.getWritableDatabase();		
-	}
+	
 	
 	public Cursor getShapeInfo(String shape_id) {
 		return database.rawQuery("SELECT * FROM " + shapeTableName + " WHERE shape_id='" + shape_id + "'", null);

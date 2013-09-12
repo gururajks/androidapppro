@@ -15,14 +15,16 @@ public class DatabaseQueryService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		String routeTag = intent.getStringExtra(INCOMING_INTENT);
 		String shape_id = AppConstants.ROUTE_SHAPE().get(routeTag);
-    	ShapeInfoDbManager dbManager = new ShapeInfoDbManager(getApplicationContext());
+
+    	DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
 		Cursor dbCursor = dbManager.getShapeInfo(shape_id);		
-		System.out.println(routeTag + shape_id);
+
 		if(dbCursor != null && dbCursor.moveToFirst()) {	 		 
 			do {
 				System.out.println("lat:" + dbCursor.getDouble(dbCursor.getColumnIndex("shape_lon")));	            				
 			}
 			while(dbCursor.moveToNext());
+
 		} 
 		dbManager.closeDb(); 		
 	}

@@ -17,6 +17,7 @@ import com.support.mbtalocpro.ShapeInfoDbManager;
 import com.support.mbtalocpro.SubwayJsonParser;
 
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.ActionBar;
@@ -25,6 +26,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.support.v4.app.FragmentActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -201,8 +204,7 @@ public class FavouriteBusList extends UrlConnector {
 	private class DownloadSubwayPredictions extends AsyncTask<String, Integer, ArrivingTransport> {
 
 		@Override
-		protected ArrivingTransport doInBackground(String... params) {
-			
+		protected ArrivingTransport doInBackground(String... params) {			
 			
 			SubwayJsonParser subwayParser = new SubwayJsonParser(params[3], params[2], params[1], params[0]);
 			subwayParser.parseSubwayInfo();
@@ -344,4 +346,37 @@ public class FavouriteBusList extends UrlConnector {
 		}
 		return super.onMenuItemSelected(featureId, item);		
 	}
+	
+	
+	/* On activity result from image button */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		System.out.println("Result Code" + resultCode);
+		if(requestCode == FavoriteListAdapter.IMAGE_PICK_CODE && data != null && data.getData() != null && resultCode == FragmentActivity.RESULT_OK) {
+			Uri _uri = data.getData();
+
+	        //User had pick an image.
+	        Cursor cursor = getContentResolver().query(_uri, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
+	        cursor.moveToFirst();
+
+	        //Link to the image
+	        String imageFilePath = cursor.getString(0);
+	        System.out.println("imagefilepath" + imageFilePath);        
+	        cursor.close(); 
+		}
+	}		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

@@ -26,6 +26,7 @@ public class FavoriteListAdapter extends BaseAdapter {
 	ArrayList<FavoriteListItemObject> favoriteObjectList;
 	Context context;
 	ImageButton routeImage;
+	public final static int IMAGE_PICK_CODE = 0;
 	
 	public FavoriteListAdapter(Context context, ArrayList<FavoriteListItemObject> favoriteObjectList) {
 		this.favoriteObjectList = favoriteObjectList;
@@ -87,30 +88,16 @@ public class FavoriteListAdapter extends BaseAdapter {
 	/*
 	 * Image button click listener for all the items in the list 
 	 */
-	private class ImageOnClickListener extends FragmentActivity implements OnClickListener {
-
-		public final int IMAGE_PICK_CODE = 1;
+	private class ImageOnClickListener implements OnClickListener {
+				
 		@Override
 		public void onClick(View view) {
 			Intent imageIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 			imageIntent.setType("image/*");
-			startActivity(imageIntent);//, IMAGE_PICK_CODE);
+			
+			((FragmentActivity)view.getContext()).startActivityForResult(imageIntent, IMAGE_PICK_CODE);
 		}
 		
-		protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-			if(requestCode == IMAGE_PICK_CODE && data != null && data.getData() != null) {
-				Uri _uri = data.getData();
-
-		        //User had pick an image.
-		        Cursor cursor = getContentResolver().query(_uri, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
-		        cursor.moveToFirst();
-
-		        //Link to the image
-		        final String imageFilePath = cursor.getString(0);
-		        routeImage.setImageBitmap(BitmapFactory.decodeFile(imageFilePath));
-		        cursor.close();
-			}
-		}
 		
 	}
 

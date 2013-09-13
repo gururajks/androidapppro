@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.sax.StartElementListener;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class FavoriteListAdapter extends BaseAdapter {
@@ -27,6 +29,7 @@ public class FavoriteListAdapter extends BaseAdapter {
 	Context context;
 	ImageButton routeImage;
 	public final static int IMAGE_PICK_CODE = 0;
+	int indexClicked;
 	
 	public FavoriteListAdapter(Context context, ArrayList<FavoriteListItemObject> favoriteObjectList) {
 		this.favoriteObjectList = favoriteObjectList;
@@ -40,20 +43,21 @@ public class FavoriteListAdapter extends BaseAdapter {
 
 	@Override
 	public Object getItem(int arg0) {		
-		return null;
+		return favoriteObjectList.get(arg0);
 	}
 
-	@Override
-	public long getItemId(int arg0) {		
-		return arg0;
+	@Override 
+	public long getItemId(int position) {		
+		return position;
 	}
 
 	@Override
 	public View getView(int index, View view, ViewGroup viewGroup) {
+		
 		if(view == null) {
 			LayoutInflater inflator = LayoutInflater.from(viewGroup.getContext());
-			view = inflator.inflate(R.layout.fav_item, viewGroup, false);
-		}	
+			view = inflator.inflate(R.layout.fav_item, viewGroup, false);			
+		}	 
 		FavoriteListItemObject favoriteListItemObject = favoriteObjectList.get(index);
 		
 		//Route name in bold
@@ -78,13 +82,19 @@ public class FavoriteListAdapter extends BaseAdapter {
 			transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_trains));
 		}
 		
+		if(favoriteListItemObject.transportationType.equalsIgnoreCase("Subway")) {
+			transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_subway));
+		}
+		
 		//Image button
 		routeImage = (ImageButton) view.findViewById(R.id.pinImage);
 		if(!favoriteListItemObject.imagePath.equalsIgnoreCase("")) {		//Not equal to "" empty string then dont set image 
 			routeImage.setImageBitmap(BitmapFactory.decodeFile(favoriteListItemObject.imagePath)); 
 		}
 		routeImage.setOnClickListener(new ImageOnClickListener());
-				
+		
+		routeImage.setTag(index);		
+		
 		return view;
 	}
 	
@@ -97,6 +107,15 @@ public class FavoriteListAdapter extends BaseAdapter {
 		public void onClick(View view) {
 			Intent imageIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 			imageIntent.setType("image/*");
+			
+			/*RelativeLayout relativeLayout = (RelativeLayout) view.getParent();
+			ImageButton imageButton = (ImageButton) relativeLayout.getChildAt(0);*/
+			//Integer position = (Integer) imageButton.getTag();
+			Integer position = (Integer) view.getTag();
+			/*imageIntent.putExtra("indexClicked", position.toString());
+			imageIntent.putExtra("exp", "testing");*/
+			
+			imageIntent.putExtra("exp", "testing");
 			
 			((FragmentActivity)view.getContext()).startActivityForResult(imageIntent, IMAGE_PICK_CODE);
 		}

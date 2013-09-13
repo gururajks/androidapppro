@@ -52,11 +52,7 @@ public class DatabaseManager {
 	public Cursor getShapeInfo(String shape_id) {
 		return database.rawQuery("SELECT * FROM " + shapeTableName + " WHERE shape_id='" + shape_id + "'", null);
 	}
-	
-	
-	
-	
-	
+		
 	public void closeDb() {
 		database.close();
 	}

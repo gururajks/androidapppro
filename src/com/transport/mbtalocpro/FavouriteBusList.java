@@ -288,16 +288,15 @@ public class FavouriteBusList extends UrlConnector {
 	//Deleting bookmark
 	private void deleteBookmark(long id) {		
 		int index = (int) id;
-		/*if(favoritesAdapter != null) {
+		if(favoritesAdapter != null) {
 			//delete in the database as well 
 			DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
 			FavoriteListItemObject favoriteListItemObject = favoriteObjectList.get(index);
 			dbManager.deleteDataByStop(favoriteListItemObject.routeTag, favoriteListItemObject.directionTag, favoriteListItemObject.stopTag);
 			favoriteObjectList.remove(index);
-			favoritesAdapter.remove(favBusRoutes.get(index));
 			favoritesAdapter.notifyDataSetChanged();
 			dbManager.closeDb();
-		}*/
+		}
 	}
 	
 	
@@ -355,19 +354,18 @@ public class FavouriteBusList extends UrlConnector {
 		System.out.println("Result Code" + resultCode);
 		if(requestCode == FavoriteListAdapter.IMAGE_PICK_CODE && data != null && data.getData() != null && resultCode == FragmentActivity.RESULT_OK) {
 			Uri _uri = data.getData();
-
+			
 	        //User had pick an image.
 	        Cursor cursor = getContentResolver().query(_uri, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
 	        cursor.moveToFirst();
 
 	        //Link to the image
 	        String imageFilePath = cursor.getString(0);
+	        
+	       
 	        System.out.println("imagefilepath" + imageFilePath);  
-	        FavoriteListItemObject favoriteListItemObject = new FavoriteListItemObject();
-	        favoriteListItemObject.imagePath = imageFilePath;
-	        favoriteObjectList.add(favoriteListItemObject);
-	        favoritesAdapter.notifyDataSetChanged();
-	        cursor.close(); 
+	        System.out.println(data.getStringExtra("exp"));
+	        cursor.close();  
 		}
 	}		
 	

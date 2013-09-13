@@ -9,6 +9,7 @@ public class FavoriteListItemObject {
 	public String directionTitle;
 	public String stopTag;
 	public String stopTitle;
+	public String imagePath;
 	
 	public ArrivingTransport arrivingTransport;
 	

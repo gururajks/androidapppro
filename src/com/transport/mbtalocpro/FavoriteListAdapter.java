@@ -80,6 +80,9 @@ public class FavoriteListAdapter extends BaseAdapter {
 		
 		//Image button
 		routeImage = (ImageButton) view.findViewById(R.id.pinImage);
+		if(!favoriteListItemObject.imagePath.equalsIgnoreCase("")) {		//Not equal to "" empty string then dont set image 
+			routeImage.setImageBitmap(BitmapFactory.decodeFile(favoriteListItemObject.imagePath)); 
+		}
 		routeImage.setOnClickListener(new ImageOnClickListener());
 				
 		return view;

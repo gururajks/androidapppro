@@ -49,7 +49,7 @@ public class FavouriteBusList extends UrlConnector {
 	String choosenDirection;
 	String choosenStop;
 	int BUSLIST = 1;
-	ArrayAdapter<String> favoritesAdapter;
+	FavoriteListAdapter favoritesAdapter;
 	ArrayList<FavoriteListItemObject> favoriteObjectList;
 	ProgressDialog progressDialog = null;
 	
@@ -92,12 +92,13 @@ public class FavouriteBusList extends UrlConnector {
 				favoriteObjectListItem.stopTitle = (favRoutes.getString(5));
 				favoriteObjectListItem.stopTag = (favRoutes.getString(6));
 				favoriteObjectListItem.transportationType = favRoutes.getString(8);
+				favoriteObjectListItem.imagePath = "";
 				favoriteObjectList.add(favoriteObjectListItem);
 			} while(favRoutes.moveToNext());			
 		}
 		  
 		ListView listView = (ListView) findViewById(R.id.fav_bus_list);		
-		FavoriteListAdapter favoritesAdapter = new FavoriteListAdapter(getApplicationContext(), favoriteObjectList);
+		favoritesAdapter = new FavoriteListAdapter(getApplicationContext(), favoriteObjectList);
 				
 		listView.setAdapter(favoritesAdapter); 
 		
@@ -287,7 +288,7 @@ public class FavouriteBusList extends UrlConnector {
 	//Deleting bookmark
 	private void deleteBookmark(long id) {		
 		int index = (int) id;
-		if(favoritesAdapter != null) {
+		/*if(favoritesAdapter != null) {
 			//delete in the database as well 
 			DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
 			FavoriteListItemObject favoriteListItemObject = favoriteObjectList.get(index);
@@ -296,7 +297,7 @@ public class FavouriteBusList extends UrlConnector {
 			favoritesAdapter.remove(favBusRoutes.get(index));
 			favoritesAdapter.notifyDataSetChanged();
 			dbManager.closeDb();
-		}
+		}*/
 	}
 	
 	
@@ -361,7 +362,11 @@ public class FavouriteBusList extends UrlConnector {
 
 	        //Link to the image
 	        String imageFilePath = cursor.getString(0);
-	        System.out.println("imagefilepath" + imageFilePath);        
+	        System.out.println("imagefilepath" + imageFilePath);  
+	        FavoriteListItemObject favoriteListItemObject = new FavoriteListItemObject();
+	        favoriteListItemObject.imagePath = imageFilePath;
+	        favoriteObjectList.add(favoriteListItemObject);
+	        favoritesAdapter.notifyDataSetChanged();
 	        cursor.close(); 
 		}
 	}		

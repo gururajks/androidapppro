@@ -7,11 +7,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.MapFragment;
+
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -20,14 +19,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.support.mbtalocpro.AppConstants;
+
 import com.support.mbtalocpro.ArrivingTransport;
 import com.support.mbtalocpro.CommuterRailParser;
 import com.support.mbtalocpro.DatabaseQueryService;
 import com.support.mbtalocpro.DirectionPrediction;
 import com.support.mbtalocpro.Prediction;
 import com.support.mbtalocpro.RoutePrediction;
-import com.support.mbtalocpro.ShapeInfoDbManager;
+import com.support.mbtalocpro.ParcelablePoint;
+
 import com.support.mbtalocpro.SubwayJsonParser;
 import com.support.mbtalocpro.Transport;
 import com.support.mbtalocpro.Direction;
@@ -37,7 +37,10 @@ import com.support.mbtalocpro.Route;
 import com.support.mbtalocpro.Stop;
 import com.transport.mbtalocpro.PredictionTimeFragment.PredictedTimeFragmentItemSelectedListener;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -47,8 +50,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,6 +76,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	private boolean gps_menu_setting;
 	private boolean traffic_menu_setting;
 	SharedPreferences sharedPref;
+	RoutesPointReceiver routesReceiver;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +92,12 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         //Prediction time part
         Intent intent = getIntent();
         arrivingBus = (ArrivingTransport) intent.getSerializableExtra("arrivingBus");
+        IntentFilter intentFilter = new IntentFilter(RoutesPointReceiver.POINT_RECEIVER_FLAG);
         
-        populateFragments(arrivingBus);
-                
+        routesReceiver = new RoutesPointReceiver();
+        registerReceiver(routesReceiver, intentFilter);
+        
+        populateFragments(arrivingBus);                
 	}
     
     
@@ -500,7 +509,23 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		}
 	}
 	
+    @Override
+    protected void onPause() {
+    	super.onPause();
+    	if(routesReceiver != null) {
+    		unregisterReceiver(routesReceiver);
+    		routesReceiver = null;
+    	}    	
+    }
     
+    @Override
+    protected void onStop() {
+    	super.onStop();
+    	if(routesReceiver != null) {
+    		unregisterReceiver(routesReceiver);
+    		routesReceiver = null;
+    	}
+    }
 
 	//Triggered when 
 	public void onFragmentItemSelected() {
@@ -514,6 +539,29 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
      * Broadcast receiver for maps data coming in
      */
       
+	public class RoutesPointReceiver extends BroadcastReceiver {
+
+		public final static String POINT_RECEIVER_FLAG = "ACTION_RECEIVED";
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			if(gMap != null) {
+				System.out.println("Broadcast received");
+				Bundle bundle = intent.getExtras();				
+				ArrayList<ParcelablePoint> points = bundle.getParcelableArrayList("points");
+				PolylineOptions pOptions = new PolylineOptions();
+				for(int i = 0 ; i < points.size(); i++) {					
+					ParcelablePoint point = points.get(i);
+					System.out.println(point.getLat() + " " + point.getLng());
+					pOptions.add(new LatLng(point.getLat(), point.getLng()));					
+				}
+				Polyline trainPolyline = gMap.addPolyline(pOptions);
+				trainPolyline.setWidth(3);
+			}
+			
+		}
+		
+	}
 	
 	
 	

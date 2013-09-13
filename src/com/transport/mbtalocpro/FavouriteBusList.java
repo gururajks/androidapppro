@@ -13,7 +13,7 @@ import com.support.mbtalocpro.DirectionPrediction;
 import com.support.mbtalocpro.FavoriteListItemObject;
 import com.support.mbtalocpro.Prediction;
 import com.support.mbtalocpro.RoutePrediction;
-import com.support.mbtalocpro.ShapeInfoDbManager;
+
 import com.support.mbtalocpro.SubwayJsonParser;
 
 

@@ -32,7 +32,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				   "stopTitle TEXT, " +
 				   "stopTag TEXT, " +				   
 				   "listposition INTEGER, " + 
-				   "transportationType TEXT)");
+				   "transportationType TEXT, " +
+				   "imagePath TEXT)");
 		database.execSQL("CREATE TABLE if not exists " + shapeTableName + 
 				" (id INTEGER PRIMARY KEY, " +
 				   "shape_id TEXT, " +

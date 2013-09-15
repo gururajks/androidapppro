@@ -69,7 +69,7 @@ public class SubwayJsonParser {
 	private void parseJson(InputStream is) throws IOException, NullPointerException, JSONException {
 		String jsonString = getStringFromStream(is);		
 		arrivingTransport = new ArrivingTransport();		
-		arrivingTransport.routeTitle = trainNo;
+		arrivingTransport.routeTitle = trainTitle;
 		JSONObject json = new JSONObject(jsonString);		
 		JSONObject tripList = json.getJSONObject("TripList");
 		arrivingTransport.transportType = "Subway";

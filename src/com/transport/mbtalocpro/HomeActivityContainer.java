@@ -92,8 +92,8 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         //Prediction time part
         Intent intent = getIntent();
         arrivingBus = (ArrivingTransport) intent.getSerializableExtra("arrivingBus");
-        IntentFilter intentFilter = new IntentFilter(RoutesPointReceiver.POINT_RECEIVER_FLAG);
         
+        IntentFilter intentFilter = new IntentFilter(RoutesPointReceiver.POINT_RECEIVER_FLAG);        
         routesReceiver = new RoutesPointReceiver();
         registerReceiver(routesReceiver, intentFilter);
         
@@ -134,18 +134,19 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            		createGpsMarker(train);//this is for trains
 	            	}	            		
 	            	createStopMarker(arrivingBus);
-	            	displayTrainRouteLines(routeTag);           			            		
+	            	if(routeTag!=null) displayTrainRouteLines(routeTag);           			            		
 	            }
 	            if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
-	            	/*for(Transport train:arrivingBus.vehicles) 
-	            		createGpsMarker(train);//this is for trains*/
-	            	displayTrainRouteLines(routeTag);   
+	            	for(Transport train:arrivingBus.vehicles) 
+	            		createGpsMarker(train);//this is for trains
+	            	if(routeTag!=null) displayTrainRouteLines(routeTag);   
 	            }
 	    	} 
 	    } 
     } 
     
     public void displayTrainRouteLines(String routeTag) {
+    	
     	Intent intent = new Intent(this, DatabaseQueryService.class);
     	intent.putExtra(DatabaseQueryService.INCOMING_INTENT,routeTag);
     	startService(intent);	
@@ -544,15 +545,12 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		public final static String POINT_RECEIVER_FLAG = "ACTION_RECEIVED";
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			
-			if(gMap != null) {
-				System.out.println("Broadcast received");
+			if(gMap != null) {				
 				Bundle bundle = intent.getExtras();				
 				ArrayList<ParcelablePoint> points = bundle.getParcelableArrayList("points");
 				PolylineOptions pOptions = new PolylineOptions();
 				for(int i = 0 ; i < points.size(); i++) {					
 					ParcelablePoint point = points.get(i);
-					System.out.println(point.getLat() + " " + point.getLng());
 					pOptions.add(new LatLng(point.getLat(), point.getLng()));					
 				}
 				Polyline trainPolyline = gMap.addPolyline(pOptions);

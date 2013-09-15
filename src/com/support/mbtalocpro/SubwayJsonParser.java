@@ -36,6 +36,7 @@ public class SubwayJsonParser {
 		InputStream is = null;
 		try {
 			url = new URL("http://developer.mbta.com/lib/rthr/" + train[0] + ".json");
+			
 			is = getJsonFeed(url);
 			parseJson(is);
 		} catch (MalformedURLException e) {
@@ -87,7 +88,9 @@ public class SubwayJsonParser {
 				transport.heading = position.getInt("Heading");
 				arrivingTransport.vehicles.add(transport);
 			}
-			String destination = trip.getString("Destination");
+			String destination = trip.getString("Destination");			
+			String tempStringArray[] = destination.split(" ");
+			destination = tempStringArray[0]; 		//trying to get the first word in a destination
 			if(destination.equalsIgnoreCase(direction)) {
 				arrivingTransport.dirTag = destination;
 				arrivingTransport.direction = destination;
@@ -97,7 +100,7 @@ public class SubwayJsonParser {
 					if(prediction.getString("StopID").equalsIgnoreCase(stopNames)) {
 						arrivingTransport.stopTitle = prediction.getString("Stop");
 						arrivingTransport.stopTag = stopNames;
-						int seconds = prediction.getInt("Seconds");
+						int seconds = prediction.getInt("Seconds");						
 						int minutes = (int) Math.ceil(seconds/60);
 						arrivingTransport.minutes.add(minutes);
 						arrivingTransport.routeTag.add(trainNo);

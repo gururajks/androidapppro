@@ -80,7 +80,6 @@ public class CommuterRailParser {
 			JSONObject trip = (JSONObject) trips.getJSONObject(i);
 			String destination = trip.getString("Destination");
 			String stop = trip.getString("Stop");			 
-			System.out.println("stop" + stop + " stopNames" + stopNames + direction + destination);
 			if(stop.equalsIgnoreCase(stopNames) && direction.equalsIgnoreCase(destination)) {
 				String scheduledEpochTime = trip.getString("Scheduled");
 				String timeStampEpochTime = trip.getString("TimeStamp");

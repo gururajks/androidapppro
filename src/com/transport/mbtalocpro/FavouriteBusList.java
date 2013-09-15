@@ -208,7 +208,7 @@ public class FavouriteBusList extends UrlConnector {
 		@Override
 		protected ArrivingTransport doInBackground(String... params) {			
 			
-			SubwayJsonParser subwayParser = new SubwayJsonParser(params[3], params[2], params[1], params[0]);
+			SubwayJsonParser subwayParser = new SubwayJsonParser(params[3], params[2], params[1], params[0]);			
 			subwayParser.parseSubwayInfo();
 			return subwayParser.getArrivingTransport();
 			

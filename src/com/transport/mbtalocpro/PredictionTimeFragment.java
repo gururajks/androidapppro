@@ -32,12 +32,12 @@ public class PredictionTimeFragment extends Fragment {
 		  return view;
 	  }
 	  
-	  public void setArrivingBusDetails(Context context, ArrivingTransport arrivingBus) {
+	  public void setArrivingBusDetails(Context context, ArrivingTransport arrivingBus, String prediction_time_format) {
 		  
 		  
 		  ListView listView = (ListView) view.findViewById(R.id.predictedItem);
 		  
-		  PredictionTimeListAdapter minutesAdapter = new PredictionTimeListAdapter(context, arrivingBus);
+		  PredictionTimeListAdapter minutesAdapter = new PredictionTimeListAdapter(context, arrivingBus, prediction_time_format);
 		  
 		  listView.setAdapter(minutesAdapter);
 		  

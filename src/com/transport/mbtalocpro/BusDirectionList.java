@@ -191,7 +191,7 @@ public class BusDirectionList extends UrlConnector implements BusStopsDialogList
 								ArrayList<Prediction> predictions = predictedDirection.predictionList;
 								for(int k = 0 ; k < predictions.size(); k++) {		//Iterate through multiple prediction tags
 									Prediction busPrediction = predictions.get(k);
-									arrivingBus.minutes.add(busPrediction.minutes);
+									arrivingBus.timeInSeconds.add(busPrediction.seconds);
 									arrivingBus.routeTag.add(predictedRoute.routeTag);									
 									arrivingBus.vehicleIds.add(busPrediction.vehicleId);
 								}

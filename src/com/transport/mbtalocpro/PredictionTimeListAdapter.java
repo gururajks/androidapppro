@@ -40,20 +40,30 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int index, View view, ViewGroup viewGroup) {
+		ViewHolder viewHolder;
 		if(view == null) {
 			LayoutInflater inflator = LayoutInflater.from(viewGroup.getContext());
 			view = inflator.inflate(R.layout.predicted_time_item, viewGroup, false);
+			
+			viewHolder = new ViewHolder();
+			viewHolder.timeItem = (TextView) view.findViewById(R.id.predictedTimeItem);
+			viewHolder.timeDisplayItem = (TextView) view.findViewById(R.id.predictedTimeDisplayItem);
+			viewHolder.routeNoDisplay = (TextView) view.findViewById(R.id.routedisplay);			
+			view.setTag(viewHolder);
 		}	
+		else {
+			viewHolder = (ViewHolder) view.getTag();			
+		}
 		String routeInfo = arrivingBus.direction + " \n@ " + arrivingBus.stopTitle;
 		String eta = String.valueOf(arrivingBus.timeInSeconds.get(index));
 		String routeNo = arrivingBus.routeTitle;
-		TextView timeItem = (TextView) view.findViewById(R.id.predictedTimeItem);		 
-		timeItem.setText(routeInfo);
-		TextView timeDisplayItem = (TextView) view.findViewById(R.id.predictedTimeDisplayItem);
+				 
+		viewHolder.timeItem.setText(routeInfo);
+		
 		eta = formatTime(eta);
-		timeDisplayItem.setText(eta);
-		TextView routeNoDisplay = (TextView) view.findViewById(R.id.routedisplay);
-		routeNoDisplay.setText(routeNo);
+		viewHolder.timeDisplayItem.setText(eta);
+		
+		viewHolder.routeNoDisplay.setText(routeNo);
 		return view;
 	}
 	
@@ -70,6 +80,13 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 		}
 		
 		return eta;
+	}
+	
+	private static class ViewHolder {
+		public TextView timeItem;
+		public TextView timeDisplayItem;
+		public TextView routeNoDisplay;
+		
 	}
 
 }

@@ -54,14 +54,7 @@ public class DatabaseManager {
 		updatedValues.put("imagePath", imageFilePath);
 		database.update(tableName, updatedValues, "routeTag=? AND dirTag=? AND stopTag=?", new String[] {routeTag, dirTag, stopTag});
 	}
-	
-	/*
-	 * Shape Data
-	 */
-	public Cursor getShapeInfo(String shape_id) {
-		return database.rawQuery("SELECT * FROM " + shapeTableName + " WHERE shape_id='" + shape_id + "'", null);
-	}
-		
+
 	public void closeDb() {
 		database.close();
 	}

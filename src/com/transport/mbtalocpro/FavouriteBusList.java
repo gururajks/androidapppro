@@ -75,8 +75,15 @@ public class FavouriteBusList extends UrlConnector {
 			});
 		}*/
 		displayFavoriteRoutes();		
+		
+		installShapesData();
 	}
 	
+	private void installShapesData() {
+		Intent intent = new Intent(this, DatabaseQueryService.class);
+    	startService(intent);			
+	}
+
 	//Displays the routes in the sql database
 	public void displayFavoriteRoutes() {
 		favBusRoutes = new ArrayList<String>();

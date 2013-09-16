@@ -18,28 +18,32 @@ public class DatabaseQueryService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		ShapesInfoDatabaseManager dbManager = new ShapesInfoDatabaseManager(getApplicationContext());
 		String routeTag = intent.getStringExtra(INCOMING_INTENT);		
-		String shape_id = AppConstants.ROUTE_SHAPE().get(routeTag);
-		ArrayList<ParcelablePoint> pointsArray = new ArrayList<ParcelablePoint>();
-    	DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
-		Cursor dbCursor = dbManager.getShapeInfo(shape_id);		
-		
-		if(dbCursor != null && dbCursor.moveToFirst()) {	 		 
-			do { 				
-				double lat = dbCursor.getDouble(dbCursor.getColumnIndex("shape_lat"));
-				double lng = dbCursor.getDouble(dbCursor.getColumnIndex("shape_lon"));				
-				pointsArray.add(new ParcelablePoint(lat, lng));				
-			}
-			while(dbCursor.moveToNext());
-
-		} 
-		dbManager.closeDb(); 	
-		Intent broadCast = new Intent();		
-		Bundle bundle = new Bundle();
-		bundle.putParcelableArrayList("points", pointsArray);
-		broadCast.setAction(RoutesPointReceiver.POINT_RECEIVER_FLAG);
-		broadCast.putExtras(bundle);
-		sendBroadcast(broadCast);
+		if(routeTag != null) {
+			String shape_id = AppConstants.ROUTE_SHAPE().get(routeTag);
+			ArrayList<ParcelablePoint> pointsArray = new ArrayList<ParcelablePoint>();
+			
+			Cursor dbCursor = dbManager.getShapeInfo(shape_id);		
+			
+			if(dbCursor != null && dbCursor.moveToFirst()) {	 		 
+				do { 				
+					double lat = dbCursor.getDouble(dbCursor.getColumnIndex("shape_lat"));
+					double lng = dbCursor.getDouble(dbCursor.getColumnIndex("shape_lon"));				
+					pointsArray.add(new ParcelablePoint(lat, lng));				
+				}
+				while(dbCursor.moveToNext());
+	
+			} 
+			 	
+			Intent broadCast = new Intent();		
+			Bundle bundle = new Bundle();
+			bundle.putParcelableArrayList("points", pointsArray);
+			broadCast.setAction(RoutesPointReceiver.POINT_RECEIVER_FLAG);
+			broadCast.putExtras(bundle);
+			sendBroadcast(broadCast);
+		}
+		dbManager.closeDb();
 	}
 
 }

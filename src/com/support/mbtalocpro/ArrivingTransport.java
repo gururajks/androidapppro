@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class ArrivingTransport implements Serializable {
 	
-	public ArrayList<Integer> minutes;
+	public ArrayList<Integer> timeInSeconds;
 	public String dirTag;
 	public String direction;
 	public ArrayList<String> routeTag;
@@ -19,7 +19,7 @@ public class ArrivingTransport implements Serializable {
 	public ArrayList<Transport> vehicles;
 	
 	public ArrivingTransport() {
-		minutes = new ArrayList<Integer>();
+		timeInSeconds = new ArrayList<Integer>();
 		routeTag = new ArrayList<String>();
 		vehicleIds = new ArrayList<String>();
 		vehicles = new ArrayList<Transport>();

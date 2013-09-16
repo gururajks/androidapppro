@@ -80,15 +80,14 @@ public class CommuterRailParser {
 			JSONObject trip = (JSONObject) trips.getJSONObject(i);
 			String destination = trip.getString("Destination");
 			String stop = trip.getString("Stop");			 
-			System.out.println("stop" + stop + " stopNames" + stopNames + direction + destination);
 			if(stop.equalsIgnoreCase(stopNames) && direction.equalsIgnoreCase(destination)) {
 				String scheduledEpochTime = trip.getString("Scheduled");
 				String timeStampEpochTime = trip.getString("TimeStamp");
 				String lateness = trip.getString("Lateness");
-				int scheduledMinutes = getMinutes(scheduledEpochTime, timeStampEpochTime);
+				int scheduledMinutes = getSeconds(scheduledEpochTime, timeStampEpochTime);
 				int latenessValue = 0;
 				if(lateness != "") latenessValue = Integer.parseInt(lateness);				
-				arrivingTransport.minutes.add(scheduledMinutes + latenessValue);
+				arrivingTransport.timeInSeconds.add(scheduledMinutes + latenessValue);
 				arrivingTransport.routeTag.add(trainNo);
 				arrivingTransport.stopTitle = stop;
 				arrivingTransport.stopTag = stop;
@@ -101,18 +100,16 @@ public class CommuterRailParser {
 				transport.lng = Double.parseDouble(trip.getString("Longitude"));
 				transport.heading = Integer.parseInt(trip.getString("Heading"));
 				arrivingTransport.vehicles.add(transport);
-			}
-			
-		}
-		
+			}			
+		}		
 	}
 	
 	//Takes the scheduled and the time stamp and returns the minutes left for arrival
-	private int getMinutes(String scheduledEpochTime, String timeStampEpochTime) {		
+	private int getSeconds(String scheduledEpochTime, String timeStampEpochTime) {		
 		Date sched = new Date(Long.parseLong(scheduledEpochTime));
 		Date timeS = new Date(Long.parseLong(timeStampEpochTime));
 		Long diff = Math.abs(sched.getTime() - timeS.getTime());
-		int intdiff =  (int) (diff/60); 		
+		int intdiff =  (int) (diff/1); 		
 		return intdiff;
 	}
 

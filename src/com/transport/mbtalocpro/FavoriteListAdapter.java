@@ -87,10 +87,14 @@ public class FavoriteListAdapter extends BaseAdapter {
 		}
 		
 		//Image button
-		routeImage = (ImageButton) view.findViewById(R.id.pinImage);
-		if(!favoriteListItemObject.imagePath.equalsIgnoreCase("")) {		//Not equal to "" empty string then dont set image 
-			routeImage.setImageBitmap(BitmapFactory.decodeFile(favoriteListItemObject.imagePath)); 
+		routeImage = (ImageButton) view.findViewById(R.id.pinImage);			
+		if(favoriteListItemObject.imagePath != null) {
+			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+			bitmapOptions.inSampleSize = 25;
+			Bitmap image = BitmapFactory.decodeFile(favoriteListItemObject.imagePath, bitmapOptions);
+			routeImage.setImageBitmap(image);
 		}
+		
 		routeImage.setOnClickListener(new ImageOnClickListener());
 		
 		routeImage.setTag(index);		
@@ -108,19 +112,20 @@ public class FavoriteListAdapter extends BaseAdapter {
 			Intent imageIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 			imageIntent.setType("image/*");
 			
-			/*RelativeLayout relativeLayout = (RelativeLayout) view.getParent();
-			ImageButton imageButton = (ImageButton) relativeLayout.getChildAt(0);*/
-			//Integer position = (Integer) imageButton.getTag();
 			Integer position = (Integer) view.getTag();
-			/*imageIntent.putExtra("indexClicked", position.toString());
-			imageIntent.putExtra("exp", "testing");*/
 			
-			imageIntent.putExtra("exp", "testing");
-			
+			setClickedIndex(position.intValue());
 			((FragmentActivity)view.getContext()).startActivityForResult(imageIntent, IMAGE_PICK_CODE);
-		}
-		
-		
+		}		
+	}
+	
+	int index;
+	public void setClickedIndex(int index) {
+		this.index = index;
+	}
+	
+	public int getClickedIndex() {
+		return index;
 	}
 
 }

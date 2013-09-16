@@ -36,6 +36,7 @@ public class SubwayJsonParser {
 		InputStream is = null;
 		try {
 			url = new URL("http://developer.mbta.com/lib/rthr/" + train[0] + ".json");
+			
 			is = getJsonFeed(url);
 			parseJson(is);
 		} catch (MalformedURLException e) {
@@ -69,26 +70,28 @@ public class SubwayJsonParser {
 	private void parseJson(InputStream is) throws IOException, NullPointerException, JSONException {
 		String jsonString = getStringFromStream(is);		
 		arrivingTransport = new ArrivingTransport();		
-		arrivingTransport.routeTitle = trainNo;
+		arrivingTransport.routeTitle = trainTitle;
 		JSONObject json = new JSONObject(jsonString);		
 		JSONObject tripList = json.getJSONObject("TripList");
 		arrivingTransport.transportType = "Subway";
 		Long currentTime = tripList.getLong("CurrentTime");
 		JSONArray trips = tripList.getJSONArray("Trips"); 		
 		for(int i = 0 ; i < trips.length(); i++) {
-			JSONObject trip = (JSONObject) trips.get(i);					
-			if(!trip.isNull("Position")) {
-				JSONObject position = (JSONObject) trip.getJSONObject("Position");
-				Transport transport = new Transport();
-				Long timestamp = position.getLong("Timestamp");
-				transport.secSinceReport = (int) Math.abs(timestamp - currentTime);
-				transport.lat = position.getDouble("Lat"); 
-				transport.lng = position.getDouble("Long");
-				transport.heading = position.getInt("Heading");
-				arrivingTransport.vehicles.add(transport);
-			}
-			String destination = trip.getString("Destination");
+			JSONObject trip = (JSONObject) trips.get(i);
+			String destination = trip.getString("Destination");			
+			String tempStringArray[] = destination.split(" ");
+			destination = tempStringArray[0]; 		//trying to get the first word in a destination
 			if(destination.equalsIgnoreCase(direction)) {
+				if(!trip.isNull("Position")) {
+					JSONObject position = (JSONObject) trip.getJSONObject("Position");
+					Transport transport = new Transport();
+					Long timestamp = position.getLong("Timestamp");
+					transport.secSinceReport = (int) Math.abs(timestamp - currentTime);
+					transport.lat = position.getDouble("Lat"); 
+					transport.lng = position.getDouble("Long");
+					transport.heading = position.getInt("Heading");
+					arrivingTransport.vehicles.add(transport);
+				}			
 				arrivingTransport.dirTag = destination;
 				arrivingTransport.direction = destination;
 				JSONArray predictions = trip.getJSONArray("Predictions");				
@@ -97,9 +100,9 @@ public class SubwayJsonParser {
 					if(prediction.getString("StopID").equalsIgnoreCase(stopNames)) {
 						arrivingTransport.stopTitle = prediction.getString("Stop");
 						arrivingTransport.stopTag = stopNames;
-						int seconds = prediction.getInt("Seconds");
+						int seconds = prediction.getInt("Seconds");						
 						int minutes = (int) Math.ceil(seconds/60);
-						arrivingTransport.minutes.add(minutes);
+						arrivingTransport.timeInSeconds.add(seconds);
 						arrivingTransport.routeTag.add(trainNo);
 					}
 				}

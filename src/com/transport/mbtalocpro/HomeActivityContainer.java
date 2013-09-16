@@ -73,8 +73,10 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	 
 	private final String GPS_MENU_KEY = "gps_setting";
 	private final String TRAFFIC_MENU_KEY = "map_traffic";
+	private final String TIME_FORMAT = "prediction_time_format";
 	private boolean gps_menu_setting;
 	private boolean traffic_menu_setting;
+	private String prediction_time_format;
 	SharedPreferences sharedPref;
 	RoutesPointReceiver routesReceiver;
 	
@@ -92,8 +94,8 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         //Prediction time part
         Intent intent = getIntent();
         arrivingBus = (ArrivingTransport) intent.getSerializableExtra("arrivingBus");
-        IntentFilter intentFilter = new IntentFilter(RoutesPointReceiver.POINT_RECEIVER_FLAG);
         
+        IntentFilter intentFilter = new IntentFilter(RoutesPointReceiver.POINT_RECEIVER_FLAG);        
         routesReceiver = new RoutesPointReceiver();
         registerReceiver(routesReceiver, intentFilter);
         
@@ -103,8 +105,9 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
     
     
     public void populateFragments(ArrivingTransport arrivingBus) { 
+    	prediction_time_format = sharedPref.getString(TIME_FORMAT, "0");
     	PredictionTimeFragment predictedTime = (PredictionTimeFragment) getSupportFragmentManager().findFragmentById(R.id.listFragment);
-        predictedTime.setArrivingBusDetails(getApplicationContext(), arrivingBus);        
+        predictedTime.setArrivingBusDetails(getApplicationContext(), arrivingBus, prediction_time_format);        
         stopTag = arrivingBus.stopTag;        
         if(arrivingBus.routeTag != null) {
         	if(!arrivingBus.routeTag.isEmpty()) {
@@ -120,7 +123,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	    		gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 	    		
 	    		gps_menu_setting = sharedPref.getBoolean(GPS_MENU_KEY, true);
-	    		traffic_menu_setting = sharedPref.getBoolean(TRAFFIC_MENU_KEY, false);
+	    		traffic_menu_setting = sharedPref.getBoolean(TRAFFIC_MENU_KEY, false);	    		
 	    		gMap.setMyLocationEnabled(gps_menu_setting);
 	    		gMap.setTrafficEnabled(traffic_menu_setting);
 	    		//For setting the initial camera bounds for the map
@@ -134,18 +137,23 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            		createGpsMarker(train);//this is for trains
 	            	}	            		
 	            	createStopMarker(arrivingBus);
-	            	displayTrainRouteLines(routeTag);           			            		
+	            	if(routeTag!=null) {
+	            		displayTrainRouteLines(routeTag);           			            		
+	            	}
 	            }
 	            if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
-	            	/*for(Transport train:arrivingBus.vehicles) 
-	            		createGpsMarker(train);//this is for trains*/
-	            	displayTrainRouteLines(routeTag);   
+	            	for(Transport train:arrivingBus.vehicles) 
+	            		createGpsMarker(train);//this is for trains
+	            	if(routeTag!=null) {
+	            		displayTrainRouteLines(routeTag);   
+	            	}
 	            }
 	    	} 
 	    } 
     } 
     
     public void displayTrainRouteLines(String routeTag) {
+    	
     	Intent intent = new Intent(this, DatabaseQueryService.class);
     	intent.putExtra(DatabaseQueryService.INCOMING_INTENT,routeTag);
     	startService(intent);	
@@ -400,7 +408,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 								ArrayList<Prediction> predictions = predictedDirection.predictionList;
 								for(int k = 0 ; k < predictions.size(); k++) {		//Iterate through multiple prediction tags
 									Prediction busPrediction = predictions.get(k);
-									arrivingTransport.minutes.add(busPrediction.minutes);
+									arrivingTransport.timeInSeconds.add(busPrediction.seconds);
 									arrivingTransport.routeTag.add(predictedRoute.routeTag);									
 									arrivingTransport.vehicleIds.add(busPrediction.vehicleId);
 								}
@@ -544,15 +552,12 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		public final static String POINT_RECEIVER_FLAG = "ACTION_RECEIVED";
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			
-			if(gMap != null) {
-				System.out.println("Broadcast received");
+			if(gMap != null) {				
 				Bundle bundle = intent.getExtras();				
 				ArrayList<ParcelablePoint> points = bundle.getParcelableArrayList("points");
 				PolylineOptions pOptions = new PolylineOptions();
 				for(int i = 0 ; i < points.size(); i++) {					
 					ParcelablePoint point = points.get(i);
-					System.out.println(point.getLat() + " " + point.getLng());
 					pOptions.add(new LatLng(point.getLat(), point.getLng()));					
 				}
 				Polyline trainPolyline = gMap.addPolyline(pOptions);

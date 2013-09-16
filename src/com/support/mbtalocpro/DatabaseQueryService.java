@@ -2,6 +2,8 @@ package com.support.mbtalocpro;
 
 import java.util.ArrayList;
 
+import com.transport.mbtalocpro.HomeActivityContainer.RoutesPointReceiver;
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,7 +18,7 @@ public class DatabaseQueryService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		String routeTag = intent.getStringExtra(INCOMING_INTENT);
+		String routeTag = intent.getStringExtra(INCOMING_INTENT);		
 		String shape_id = AppConstants.ROUTE_SHAPE().get(routeTag);
 		ArrayList<ParcelablePoint> pointsArray = new ArrayList<ParcelablePoint>();
     	DatabaseManager dbManager = new DatabaseManager(getApplicationContext());
@@ -25,7 +27,7 @@ public class DatabaseQueryService extends IntentService {
 		if(dbCursor != null && dbCursor.moveToFirst()) {	 		 
 			do { 				
 				double lat = dbCursor.getDouble(dbCursor.getColumnIndex("shape_lat"));
-				double lng = dbCursor.getDouble(dbCursor.getColumnIndex("shape_lon"));
+				double lng = dbCursor.getDouble(dbCursor.getColumnIndex("shape_lon"));				
 				pointsArray.add(new ParcelablePoint(lat, lng));				
 			}
 			while(dbCursor.moveToNext());
@@ -35,8 +37,8 @@ public class DatabaseQueryService extends IntentService {
 		Intent broadCast = new Intent();		
 		Bundle bundle = new Bundle();
 		bundle.putParcelableArrayList("points", pointsArray);
+		broadCast.setAction(RoutesPointReceiver.POINT_RECEIVER_FLAG);
 		broadCast.putExtras(bundle);
-		System.out.println("Broadcast sent");
 		sendBroadcast(broadCast);
 	}
 

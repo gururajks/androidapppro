@@ -26,6 +26,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.FragmentActivity;
 import android.view.ContextMenu;
@@ -41,6 +42,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class FavouriteBusList extends UrlConnector {
@@ -92,15 +94,17 @@ public class FavouriteBusList extends UrlConnector {
 				favoriteObjectListItem.stopTitle = (favRoutes.getString(5));
 				favoriteObjectListItem.stopTag = (favRoutes.getString(6));
 				favoriteObjectListItem.transportationType = favRoutes.getString(8);
-				favoriteObjectListItem.imagePath = "";
+				favoriteObjectListItem.imagePath = favRoutes.getString(9);
 				favoriteObjectList.add(favoriteObjectListItem);
 			} while(favRoutes.moveToNext());			
 		}
 		  
-		ListView listView = (ListView) findViewById(R.id.fav_bus_list);		
+		ListView listView = (ListView) findViewById(R.id.fav_bus_list);
+		TextView emptyView = (TextView) findViewById(R.id.empty);
 		favoritesAdapter = new FavoriteListAdapter(getApplicationContext(), favoriteObjectList);
 				
 		listView.setAdapter(favoritesAdapter); 
+		listView.setEmptyView(emptyView);
 		
 		//Touch event on the favorite pane
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -175,7 +179,7 @@ public class FavouriteBusList extends UrlConnector {
 								ArrayList<Prediction> predictions = predictedDirection.predictionList;
 								for(int k = 0 ; k < predictions.size(); k++) {		//Iterate through multiple prediction tags
 									Prediction busPrediction = predictions.get(k);
-									arrivingBus.minutes.add(busPrediction.minutes);
+									arrivingBus.timeInSeconds.add(busPrediction.seconds);
 									arrivingBus.routeTag.add(predictedRoute.routeTag);									
 									arrivingBus.vehicleIds.add(busPrediction.vehicleId); 
 									arrivingBus.dirTag = busPrediction.directionTag;
@@ -207,7 +211,7 @@ public class FavouriteBusList extends UrlConnector {
 		@Override
 		protected ArrivingTransport doInBackground(String... params) {			
 			
-			SubwayJsonParser subwayParser = new SubwayJsonParser(params[3], params[2], params[1], params[0]);
+			SubwayJsonParser subwayParser = new SubwayJsonParser(params[3], params[2], params[1], params[0]);			
 			subwayParser.parseSubwayInfo();
 			return subwayParser.getArrivingTransport();
 			
@@ -300,12 +304,6 @@ public class FavouriteBusList extends UrlConnector {
 	}
 	
 	
-	
-	/*public void bookmarkbus(View view) {
-		Intent intent = new Intent(this,MbtaBusList.class);
-		startActivityForResult(intent, BUSLIST);
-	}*/
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -347,11 +345,11 @@ public class FavouriteBusList extends UrlConnector {
 		return super.onMenuItemSelected(featureId, item);		
 	}
 	
-	
+		
 	/* On activity result from image button */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		System.out.println("Result Code" + resultCode);
+		
 		if(requestCode == FavoriteListAdapter.IMAGE_PICK_CODE && data != null && data.getData() != null && resultCode == FragmentActivity.RESULT_OK) {
 			Uri _uri = data.getData();
 			
@@ -361,25 +359,23 @@ public class FavouriteBusList extends UrlConnector {
 
 	        //Link to the image
 	        String imageFilePath = cursor.getString(0);
+	        int rowPosition = favoritesAdapter.getClickedIndex();
+	        			
+			//Notify the adapter to update the image
+	        //favoriteObjectList.get(rowPosition).imagePath = imageFilePath;
 	        
-	       
-	        System.out.println("imagefilepath" + imageFilePath);  
-	        System.out.println(data.getStringExtra("exp"));
+	        DatabaseManager dbManager = new DatabaseManager(this);
+	        FavoriteListItemObject favoriteListItemObject = favoriteObjectList.get(rowPosition);
+	        String dirTag = favoriteListItemObject.directionTag;
+	        String stopTag = favoriteListItemObject.stopTag;
+	        String routeTag = favoriteListItemObject.routeTag;
+	        dbManager.updateImageFilePath(imageFilePath, routeTag, dirTag, stopTag);        
+	        dbManager.closeDb();
+	        favoritesAdapter.notifyDataSetChanged();
+	          
+	        
 	        cursor.close();  
 		}
 	}		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

@@ -26,7 +26,7 @@ public class DatabaseManager {
 		contentValues.put("dirTitle", dirTitle);
 		contentValues.put("stopTag", stopTag);
 		contentValues.put("stopTitle", stopTitle);
-		contentValues.put("transportationType", transportationType);
+		contentValues.put("transportationType", transportationType);		
 		database.insert(tableName, null, contentValues);
 	}
 	
@@ -48,7 +48,16 @@ public class DatabaseManager {
 	public Cursor getAllData() {
 		return database.rawQuery("SELECT * FROM " + tableName, null);
 	}
-		
+	
+	public void updateImageFilePath(String imageFilePath, String routeTag, String dirTag, String stopTag) {
+		ContentValues updatedValues = new ContentValues();
+		updatedValues.put("imagePath", imageFilePath);
+		database.update(tableName, updatedValues, "routeTag=? AND dirTag=? AND stopTag=?", new String[] {routeTag, dirTag, stopTag});
+	}
+	
+	/*
+	 * Shape Data
+	 */
 	public Cursor getShapeInfo(String shape_id) {
 		return database.rawQuery("SELECT * FROM " + shapeTableName + " WHERE shape_id='" + shape_id + "'", null);
 	}

@@ -36,10 +36,11 @@ public class PredictionTimeFragment extends Fragment {
 		  
 		  
 		  ListView listView = (ListView) view.findViewById(R.id.predictedItem);
-		  
+		  TextView emptyView = (TextView) view.findViewById(R.id.empty);
 		  PredictionTimeListAdapter minutesAdapter = new PredictionTimeListAdapter(context, arrivingBus, prediction_time_format);
 		  
 		  listView.setAdapter(minutesAdapter);
+		  listView.setEmptyView(emptyView);
 		  
 		  listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override

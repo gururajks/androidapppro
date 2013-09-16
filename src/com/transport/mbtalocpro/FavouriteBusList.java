@@ -42,6 +42,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class FavouriteBusList extends UrlConnector {
@@ -98,10 +99,12 @@ public class FavouriteBusList extends UrlConnector {
 			} while(favRoutes.moveToNext());			
 		}
 		  
-		ListView listView = (ListView) findViewById(R.id.fav_bus_list);		
+		ListView listView = (ListView) findViewById(R.id.fav_bus_list);
+		TextView emptyView = (TextView) findViewById(R.id.empty);
 		favoritesAdapter = new FavoriteListAdapter(getApplicationContext(), favoriteObjectList);
 				
 		listView.setAdapter(favoritesAdapter); 
+		listView.setEmptyView(emptyView);
 		
 		//Touch event on the favorite pane
 		listView.setOnItemClickListener(new OnItemClickListener() {

@@ -60,7 +60,7 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 	public String formatTime(String eta) {
 		int intEta = Integer.parseInt(eta);
 		if(prediction_time_format.equalsIgnoreCase("0")) {				//Minutes	
-			int minutes = (int) Math.ceil((intEta)/60.0);
+			int minutes = (int) Math.ceil((intEta)/60);
 			eta = String.valueOf(minutes);
 		}
 		if(prediction_time_format.equalsIgnoreCase("1")) {				//Minutes with seconds

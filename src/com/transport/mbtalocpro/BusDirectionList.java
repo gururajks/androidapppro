@@ -154,6 +154,7 @@ public class BusDirectionList extends UrlConnector implements BusStopsDialogList
 			String choosenRoute = route.routeTag;
 			progressDialog = ProgressDialog.show(this, "Loading...", "Getting Data");
 			progressDialog.setCancelable(true);
+			progressDialog.setCanceledOnTouchOutside(false);		
 			URL url;
 			try {			
 				url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=mbta&s="+choosenStop+"&r="+choosenRoute);

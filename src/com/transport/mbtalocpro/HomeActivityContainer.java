@@ -74,7 +74,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	private final String GPS_MENU_KEY = "gps_setting";
 	private final String TRAFFIC_MENU_KEY = "map_traffic";
 	private final String TIME_FORMAT = "prediction_time_format";
-	private boolean gps_menu_setting;
+	private boolean gps_menu_setting; 
 	private boolean traffic_menu_setting;
 	private String prediction_time_format;
 	SharedPreferences sharedPref;

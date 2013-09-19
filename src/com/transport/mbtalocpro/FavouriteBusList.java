@@ -123,6 +123,8 @@ public class FavouriteBusList extends UrlConnector {
 				String choosenDirectionTag = favoriteListItemObject.directionTag;				
 				choosenStop = favoriteListItemObject.stopTag;
 				progressDialog = ProgressDialog.show(FavouriteBusList.this, "Loading...", "Getting Data");
+				progressDialog.setCancelable(true);
+				progressDialog.setCanceledOnTouchOutside(false);				
 				//Bus Transportation predictions
 				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Bus")) { 
 					URL url;
@@ -202,7 +204,7 @@ public class FavouriteBusList extends UrlConnector {
 					Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
 					intent.putExtra("arrivingBus", arrivingBus);
 					startActivity(intent);
-				} 
+				}
 			}
 			else {
 				Toast.makeText(getApplicationContext(), "Unable to get Data - Possible network disruption", Toast.LENGTH_SHORT).show();
@@ -224,12 +226,15 @@ public class FavouriteBusList extends UrlConnector {
 			
 		}
 		
-		protected void onPostExecute(ArrivingTransport arrivingTransport) {
-			progressDialog.dismiss();
+		protected void onPostExecute(ArrivingTransport arrivingTransport) {			
 			if(arrivingTransport != null) {
+				progressDialog.dismiss();
 				Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
 				intent.putExtra("arrivingBus", arrivingTransport);
 				startActivity(intent);				
+			}
+			else {
+				Toast.makeText(getApplicationContext(), "Unable to get Data - Possible network disruption", Toast.LENGTH_SHORT).show();
 			}
 		}
 		
@@ -253,12 +258,15 @@ public class FavouriteBusList extends UrlConnector {
 			return commRailParser.getArrivingTransport(); 			
 		}
 		
-		protected void onPostExecute(ArrivingTransport arrivingTransport) {
-			progressDialog.dismiss();
+		protected void onPostExecute(ArrivingTransport arrivingTransport) {			
 			if(arrivingTransport != null) {
+				progressDialog.dismiss();
 				Intent intent = new Intent(getApplicationContext(), HomeActivityContainer.class);
 				intent.putExtra("arrivingBus", arrivingTransport);
 				startActivity(intent);				
+			}
+			else {
+				Toast.makeText(getApplicationContext(), "Unable to get Data - Possible network disruption", Toast.LENGTH_SHORT).show();
 			}
 		}
 		

@@ -1,15 +1,21 @@
 package com.transport.mbtalocpro;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import com.support.mbtalocpro.FavoriteListItemObject;
+import com.support.mbtalocpro.ImageLoader;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.sax.StartElementListener;
 import android.support.v4.app.FragmentActivity;
@@ -27,7 +33,20 @@ public class FavoriteListAdapter extends BaseAdapter {
 	
 	ArrayList<FavoriteListItemObject> favoriteObjectList;
 	Context context;
-	ImageButton routeImage;
+	ViewHolder viewHolder;
+		 
+	/*
+	 * Holder class for all the views to avoid the expensive findViewById process to recur
+	 */
+	private static class ViewHolder {
+		public TextView favouriteRouteName;
+		public TextView favouriteDirectionName;
+		public TextView favouriteStopName;
+		public ImageView transpoImage;
+		public ImageButton routeImage;
+	}
+	
+	
 	public final static int IMAGE_PICK_CODE = 0;
 	int indexClicked;
 	
@@ -56,51 +75,57 @@ public class FavoriteListAdapter extends BaseAdapter {
 		
 		if(view == null) {
 			LayoutInflater inflator = LayoutInflater.from(viewGroup.getContext());
-			view = inflator.inflate(R.layout.fav_item, viewGroup, false);			
+			view = inflator.inflate(R.layout.fav_item, viewGroup, false);
+			viewHolder = new ViewHolder();
+			viewHolder.favouriteRouteName = (TextView) view.findViewById(R.id.favRouteName);
+			viewHolder.favouriteDirectionName = (TextView) view.findViewById(R.id.favDirectionItem);
+			viewHolder.favouriteStopName = (TextView) view.findViewById(R.id.favStopName);
+			viewHolder.routeImage = (ImageButton) view.findViewById(R.id.pinImage);
+			view.setTag(viewHolder);
 		}	 
+		else {
+			viewHolder = (ViewHolder) view.getTag();
+		}
 		FavoriteListItemObject favoriteListItemObject = favoriteObjectList.get(index);
 		
-		//Route name in bold
-		TextView favouriteRouteName = (TextView) view.findViewById(R.id.favRouteName);
-		favouriteRouteName.setText(favoriteListItemObject.routeTitle);
+		//Route name in bold		
+		viewHolder.favouriteRouteName.setText(favoriteListItemObject.routeTitle);
 		
-		//Direction name
-		TextView favouriteDirectionName = (TextView) view.findViewById(R.id.favDirectionItem);
-		favouriteDirectionName.setText(favoriteListItemObject.directionTitle);
+		//Direction name		
+		viewHolder.favouriteDirectionName.setText(favoriteListItemObject.directionTitle);
 		
-		//Stop name
-		TextView favouriteStopName = (TextView) view.findViewById(R.id.favStopName);
-		favouriteStopName.setText(favoriteListItemObject.stopTitle);
+		//Stop name		
+		viewHolder.favouriteStopName.setText(favoriteListItemObject.stopTitle);
 		
 		//Image view for a bus or a train or a subway
-		ImageView transpoImage = (ImageView) view.findViewById(R.id.transpoImage);
+		viewHolder.transpoImage = (ImageView) view.findViewById(R.id.transpoImage);
 		if(favoriteListItemObject.transportationType.equalsIgnoreCase("Bus")) {
-			transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_bus));
+			viewHolder.transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_bus));
 		}
 		
 		if(favoriteListItemObject.transportationType.equalsIgnoreCase("Commuter Rail")) {
-			transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_trains));
+			viewHolder.transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_trains));
 		}
 		
 		if(favoriteListItemObject.transportationType.equalsIgnoreCase("Subway")) {
-			transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_subway));
+			viewHolder.transpoImage.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_subway));
 		}
 		
-		//Image button
-		routeImage = (ImageButton) view.findViewById(R.id.pinImage);			
+		//Image button					
 		if(favoriteListItemObject.imagePath != null) {
-			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-			bitmapOptions.inSampleSize = 25;
-			Bitmap image = BitmapFactory.decodeFile(favoriteListItemObject.imagePath, bitmapOptions);
-			routeImage.setImageBitmap(image);
+			
+			ImageLoader imgLoader = new ImageLoader();
+			imgLoader.loadImage(favoriteListItemObject.imagePath, viewHolder.routeImage, context.getResources(), index);
 		}
 		
-		routeImage.setOnClickListener(new ImageOnClickListener());
+		viewHolder.routeImage.setOnClickListener(new ImageOnClickListener());
 		
-		routeImage.setTag(index);		
+		viewHolder.routeImage.setTag(index);		
 		
-		return view;
+		return view; 
 	}
+	
+		
 	
 	/*
 	 * Image button click listener for all the items in the list 
@@ -127,5 +152,6 @@ public class FavoriteListAdapter extends BaseAdapter {
 	public int getClickedIndex() {
 		return index;
 	}
+	
 
 }

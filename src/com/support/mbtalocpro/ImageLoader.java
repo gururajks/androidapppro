@@ -67,12 +67,12 @@ public class ImageLoader {
 	 * Async Worker image loader class 
 	 */
 	class AsynchronousImageLoader extends AsyncTask<String, Void, Bitmap> {
-		private final WeakReference<ImageView> imageViewReference;	
+		private final WeakReference<ImageButton> imageViewReference;	
 		String filePath;
 		int index;
 		
 		public AsynchronousImageLoader(ImageButton imgButton) { 
-			imageViewReference = new WeakReference<ImageView>(imgButton);
+			imageViewReference = new WeakReference<ImageButton>(imgButton);
 		}
 		
 		@Override
@@ -83,12 +83,14 @@ public class ImageLoader {
 			bitmapOptions.inJustDecodeBounds = true;
 			BitmapFactory.decodeFile(params[0], bitmapOptions);
 			
-			bitmapOptions.inSampleSize = 25;
+			bitmapOptions.inSampleSize = calculateInSampleSize(bitmapOptions, 70,70);
 			bitmapOptions.inJustDecodeBounds = false;
 			Bitmap image = BitmapFactory.decodeFile(params[0], bitmapOptions);
 			
-			addBitmapToMemoryCache(params[1], image); 
-			return image;
+			Bitmap resizedImage = Bitmap.createScaledBitmap(image, image.getHeight(), image.getWidth(), true);
+			
+			addBitmapToMemoryCache(params[1], resizedImage); 
+			return resizedImage;
 		}
 		
 		@Override
@@ -101,6 +103,27 @@ public class ImageLoader {
 			 }
 		}
 		
+	}
+	
+	public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+	    // Raw height and width of image
+	    final int height = options.outHeight;
+	    final int width = options.outWidth;
+	    int inSampleSize = 1;
+	
+	    if (height > reqHeight || width > reqWidth) {
+	
+	        // Calculate ratios of height and width to requested height and width
+	        final int heightRatio = Math.round((float) height / (float) reqHeight);
+	        final int widthRatio = Math.round((float) width / (float) reqWidth);
+	
+	        // Choose the smallest ratio as inSampleSize value, this will guarantee
+	        // a final image with both dimensions larger than or equal to the
+	        // requested height and width.
+	        inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+	    }
+	
+	    return inSampleSize;
 	}
 	
 	static class AsyncDrawable extends BitmapDrawable {

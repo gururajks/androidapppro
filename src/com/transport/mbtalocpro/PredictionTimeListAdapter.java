@@ -1,6 +1,7 @@
 package com.transport.mbtalocpro;
 
 import com.support.mbtalocpro.ArrivingTransport;
+import com.support.mbtalocpro.Transport;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -23,13 +24,13 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return arrivingBus.timeInSeconds.size();
+		return arrivingBus.vehicles.size();
 	}
 
 	@Override
-	public Integer getItem(int index) {
+	public Transport getItem(int index) {
 		// TODO Auto-generated method stub
-		return arrivingBus.timeInSeconds.get(index);
+		return arrivingBus.vehicles.get(index);
 	}
 
 	@Override
@@ -55,7 +56,8 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 			viewHolder = (ViewHolder) view.getTag();			
 		}
 		String routeInfo = arrivingBus.direction + " \n@ " + arrivingBus.stopTitle;
-		String eta = String.valueOf(arrivingBus.timeInSeconds.get(index));
+		Transport transport = arrivingBus.vehicles.get(index);
+		String eta = String.valueOf(transport.timeOfArrival);
 		String routeNo = arrivingBus.routeTitle;
 				 
 		viewHolder.timeItem.setText(routeInfo);

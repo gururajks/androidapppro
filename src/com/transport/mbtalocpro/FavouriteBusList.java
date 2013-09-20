@@ -13,6 +13,7 @@ import com.support.mbtalocpro.DirectionPrediction;
 import com.support.mbtalocpro.FavoriteListItemObject;
 import com.support.mbtalocpro.Prediction;
 import com.support.mbtalocpro.RoutePrediction;
+import com.support.mbtalocpro.Transport;
 
 import com.support.mbtalocpro.SubwayJsonParser;
 
@@ -188,14 +189,16 @@ public class FavouriteBusList extends UrlConnector {
 								ArrayList<Prediction> predictions = predictedDirection.predictionList;
 								for(int k = 0 ; k < predictions.size(); k++) {		//Iterate through multiple prediction tags
 									Prediction busPrediction = predictions.get(k);
-									arrivingBus.timeInSeconds.add(busPrediction.seconds);
-									arrivingBus.routeTag.add(predictedRoute.routeTag);									
-									arrivingBus.vehicleIds.add(busPrediction.vehicleId); 
+									Transport transport = new Transport();
+									transport.timeOfArrival = (busPrediction.seconds);																	
+									transport.vehicleId = (busPrediction.vehicleId); 
+									arrivingBus.vehicles.add(transport);
 									arrivingBus.dirTag = busPrediction.directionTag;
 								}
 								arrivingBus.direction = choosenDirection;
 							} 
 						} 
+						arrivingBus.routeTag = (predictedRoute.routeTag);	
 						arrivingBus.routeTitle = predictedRoute.routeTitle;
 						arrivingBus.stopTitle = predictedRoute.stopTitle;
 						arrivingBus.stopTag = predictedRoute.stopTag;

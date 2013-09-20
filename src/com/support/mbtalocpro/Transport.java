@@ -10,7 +10,9 @@ public class Transport implements Serializable {
 	public String dirTitle;
 	public double lat;
 	public double lng;
-	public int secSinceReport;
+	public int secondsSinceLastReported;
 	public boolean isPredictable;
-	public int heading;
+	public int heading;	
+	public int timeOfArrival;
+	public String vehicleId;	
 }

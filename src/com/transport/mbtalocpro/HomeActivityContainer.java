@@ -295,32 +295,37 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	//creates the gps marker
     //has an image that shows the direction of the bus using the heading
 	private void createGpsMarker(Transport transportInfo) {	
-		LatLng point = new LatLng(transportInfo.lat, transportInfo.lng);
-		MarkerOptions mOptions = new MarkerOptions();
-		mOptions.position(point);
-		if(transportInfo.secondsSinceLastReported > 0) {
-			mOptions.title("GPS Position Last Reported: " +transportInfo.secondsSinceLastReported +" seconds"); 
+		try {
+			LatLng point = new LatLng(transportInfo.lat, transportInfo.lng);
+			MarkerOptions mOptions = new MarkerOptions();
+			mOptions.position(point);
+			if(transportInfo.secondsSinceLastReported > 0) {
+				mOptions.title("GPS Position Last Reported: " +transportInfo.secondsSinceLastReported +" seconds"); 
+			}
+			else {
+				mOptions.title("GPS Position Last Reported: Not known");
+			}
+			if(transportInfo.dirTag != null)
+				mOptions.snippet(transportInfo.dirTag);
+			else 
+				mOptions.snippet("Not Reporting");
+			//rotating the bus according to the direction 
+			Bitmap bmpOriginal = BitmapFactory.decodeResource(this.getResources(), R.drawable.van_bus_icon);
+			Bitmap bmResult = Bitmap.createBitmap(bmpOriginal.getWidth(), bmpOriginal.getHeight(), Bitmap.Config.ARGB_8888);
+			Canvas tempCanvas = new Canvas(bmResult);
+			int rotationAngle = transportInfo.heading - 90;
+			//fliping the bus in case
+			if(transportInfo.heading > 180) {
+				tempCanvas.scale(1.0f, -1.0f, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);
+			}
+			tempCanvas.rotate(rotationAngle, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);		
+			tempCanvas.drawBitmap(bmpOriginal, 0, 0, null);		
+			mOptions.icon(BitmapDescriptorFactory.fromBitmap(bmResult));
+			gMap.addMarker(mOptions);
 		}
-		else {
-			mOptions.title("GPS Position Last Reported: Not known");
+		catch(NullPointerException e) {
+			e.printStackTrace();
 		}
-		if(transportInfo.dirTag != null)
-			mOptions.snippet(transportInfo.dirTag);
-		else 
-			mOptions.snippet("Not Reporting");
-		//rotating the bus according to the direction 
-		Bitmap bmpOriginal = BitmapFactory.decodeResource(this.getResources(), R.drawable.van_bus_icon);
-		Bitmap bmResult = Bitmap.createBitmap(bmpOriginal.getWidth(), bmpOriginal.getHeight(), Bitmap.Config.ARGB_8888);
-		Canvas tempCanvas = new Canvas(bmResult);
-		int rotationAngle = transportInfo.heading - 90;
-		//fliping the bus in case
-		if(transportInfo.heading > 180) {
-			tempCanvas.scale(1.0f, -1.0f, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);
-		}
-		tempCanvas.rotate(rotationAngle, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);		
-		tempCanvas.drawBitmap(bmpOriginal, 0, 0, null);		
-		mOptions.icon(BitmapDescriptorFactory.fromBitmap(bmResult));
-		gMap.addMarker(mOptions);
 	}
 
 	//Creates a stop marker for trains stops 

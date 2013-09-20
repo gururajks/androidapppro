@@ -79,15 +79,20 @@ public class CommuterRailParser {
 		for(int i = 0 ; i < trips.length(); i++) {
 			JSONObject trip = (JSONObject) trips.getJSONObject(i);
 			String destination = trip.getString("Destination");
-			String stop = trip.getString("Stop");			 
+			String stop = trip.getString("Stop");
+			//For future debugging
+			/*System.out.println("Choosen Stop: " + stopNames + " JSON Stop: " + stop);
+			System.out.println("Choosen Direction: " + direction + " JSON Direction: " + destination);*/
 			if(stop.equalsIgnoreCase(stopNames) && direction.equalsIgnoreCase(destination)) {
 				String scheduledEpochTime = trip.getString("Scheduled");
 				String timeStampEpochTime = trip.getString("TimeStamp");
 				String lateness = trip.getString("Lateness");
 				int scheduledMinutes = getSeconds(scheduledEpochTime, timeStampEpochTime);
 				int latenessValue = 0;
-				if(lateness != "") latenessValue = Integer.parseInt(lateness);
-								
+				if(!lateness.equalsIgnoreCase("")) {
+					latenessValue = Integer.parseInt(lateness);
+				}
+								 
 				arrivingTransport.routeTag = trainNo;
 				arrivingTransport.stopTitle = stop;
 				arrivingTransport.stopTag = stop;
@@ -96,10 +101,18 @@ public class CommuterRailParser {
 				
 				Transport transport = new Transport();
 				transport.timeOfArrival = (scheduledMinutes + latenessValue);
-				transport.id = Integer.parseInt(trip.getString("Vehicle"));
-				transport.lat = Double.parseDouble(trip.getString("Latitude"));
-				transport.lng = Double.parseDouble(trip.getString("Longitude"));
-				transport.heading = Integer.parseInt(trip.getString("Heading"));
+				if(!trip.getString("Vehicle").equalsIgnoreCase("")) {
+					transport.id = Integer.parseInt(trip.getString("Vehicle"));
+				}
+				if(!trip.getString("Latitude").equalsIgnoreCase("")) {
+					transport.lat = Double.parseDouble(trip.getString("Latitude"));
+				}
+				if(!trip.getString("Longitude").equalsIgnoreCase("")) {
+					transport.lng = Double.parseDouble(trip.getString("Longitude"));
+				}
+				if(!trip.getString("Heading").equalsIgnoreCase("")) {
+					transport.heading = Integer.parseInt(trip.getString("Heading"));
+				}
 				arrivingTransport.vehicles.add(transport);
 			}			
 		}		

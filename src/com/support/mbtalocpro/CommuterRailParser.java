@@ -86,15 +86,16 @@ public class CommuterRailParser {
 				String lateness = trip.getString("Lateness");
 				int scheduledMinutes = getSeconds(scheduledEpochTime, timeStampEpochTime);
 				int latenessValue = 0;
-				if(lateness != "") latenessValue = Integer.parseInt(lateness);				
-				arrivingTransport.timeInSeconds.add(scheduledMinutes + latenessValue);
-				arrivingTransport.routeTag.add(trainNo);
+				if(lateness != "") latenessValue = Integer.parseInt(lateness);
+								
+				arrivingTransport.routeTag = trainNo;
 				arrivingTransport.stopTitle = stop;
 				arrivingTransport.stopTag = stop;
 				arrivingTransport.direction = destination;
 				arrivingTransport.dirTag = destination;
-				Transport transport = new Transport();
 				
+				Transport transport = new Transport();
+				transport.timeOfArrival = (scheduledMinutes + latenessValue);
 				transport.id = Integer.parseInt(trip.getString("Vehicle"));
 				transport.lat = Double.parseDouble(trip.getString("Latitude"));
 				transport.lng = Double.parseDouble(trip.getString("Longitude"));

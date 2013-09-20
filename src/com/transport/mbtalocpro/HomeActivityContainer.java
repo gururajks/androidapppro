@@ -79,6 +79,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	private String prediction_time_format;
 	SharedPreferences sharedPref;
 	RoutesPointReceiver routesReceiver;
+	private int firstTimeRefreshFlag;			//Flag that keeps a check on the refresh button hit
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +87,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         setContentView(R.layout.activity_map_time);
         
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        
+        firstTimeRefreshFlag = 0;
         routeDir = new LinkedHashMap<String, String>();
 		latList = new ArrayList<Double>();
 		lngList = new ArrayList<Double>();
@@ -99,23 +100,25 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         routesReceiver = new RoutesPointReceiver();
         registerReceiver(routesReceiver, intentFilter);
         
-        populateFragments(arrivingBus);                
+        populateFragments(arrivingBus);     
+        drawMap(arrivingBus);
 	}
-    
-    
-    
-    public void populateFragments(ArrivingTransport arrivingBus) { 
+        
+
+	public void populateFragments(ArrivingTransport arrivingBus) { 
     	prediction_time_format = sharedPref.getString(TIME_FORMAT, "0");
     	PredictionTimeFragment predictedTime = (PredictionTimeFragment) getSupportFragmentManager().findFragmentById(R.id.listFragment);
         predictedTime.setArrivingBusDetails(getApplicationContext(), arrivingBus, prediction_time_format);        
         stopTag = arrivingBus.stopTag;        
-        if(arrivingBus.routeTag != null) {
-        	if(!arrivingBus.routeTag.isEmpty()) {
-        		routeTag = arrivingBus.routeTag.get(0);        		
-        	}
-        }
-        
-        
+        if(arrivingBus.routeTag != null) {        	
+        	routeTag = arrivingBus.routeTag;        	
+        }        
+    } 
+	
+	/*
+	 * Draws the routes on google maps
+	 */
+	private void drawMap(ArrivingTransport arrivingBus) {        
         //map part 
         if(gMap == null) {
 	    	gMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag)).getMap();
@@ -149,8 +152,11 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	            	}
 	            }
 	    	} 
-	    } 
-    } 
+	    } 		
+	}
+    
+    
+    
     
     public void displayTrainRouteLines(String routeTag) {
     	
@@ -217,7 +223,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 						}														
 					}
 					//Check if the lists are not empty , move the camera to accomodate all the buses visible
-					if(!latList.isEmpty() && !lngList.isEmpty()) {
+					if(!latList.isEmpty() && !lngList.isEmpty() && firstTimeRefreshFlag == 0) {
 						Double maxLat = Collections.max(latList);
 		    	    	Double maxLng = Collections.max(lngList);		    	    	
 		    	    	LatLng maxCoord = new LatLng(maxLat, maxLng);
@@ -292,8 +298,8 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		LatLng point = new LatLng(transportInfo.lat, transportInfo.lng);
 		MarkerOptions mOptions = new MarkerOptions();
 		mOptions.position(point);
-		if(transportInfo.secSinceReport > 0) {
-			mOptions.title("GPS Position Last Reported: " +transportInfo.secSinceReport +" seconds"); 
+		if(transportInfo.secondsSinceLastReported > 0) {
+			mOptions.title("GPS Position Last Reported: " +transportInfo.secondsSinceLastReported +" seconds"); 
 		}
 		else {
 			mOptions.title("GPS Position Last Reported: Not known");
@@ -355,6 +361,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			finish();
 		}
 		if(item.getItemId() == R.id.refresh_menu) {
+			firstTimeRefreshFlag  = 1;
 			if(gMap != null) gMap.clear();
 			if(arrivingBus.transportType.equalsIgnoreCase("Bus")) {
 				downloadBusPredictions();
@@ -362,9 +369,11 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			}  
 			if(arrivingBus.transportType.equalsIgnoreCase("Subway")) {
 				new SubwayPrediction().execute(arrivingBus.stopTag);
+				drawMap(arrivingBus);
 			}
 			if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
 				new CommuterRailPrediction().execute(arrivingBus.stopTag);
+				drawMap(arrivingBus);
 			}			
 		}
 		return super.onMenuItemSelected(featureId, item);		
@@ -408,14 +417,16 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 								ArrayList<Prediction> predictions = predictedDirection.predictionList;
 								for(int k = 0 ; k < predictions.size(); k++) {		//Iterate through multiple prediction tags
 									Prediction busPrediction = predictions.get(k);
-									arrivingTransport.timeInSeconds.add(busPrediction.seconds);
-									arrivingTransport.routeTag.add(predictedRoute.routeTag);									
-									arrivingTransport.vehicleIds.add(busPrediction.vehicleId);
+									Transport transport = new Transport();
+									transport.timeOfArrival = busPrediction.seconds;																	
+									transport.vehicleId = (busPrediction.vehicleId);
+									arrivingTransport.vehicles.add(transport);
 								}
 								arrivingTransport.direction = arrivingBus.direction;
 								arrivingTransport.dirTag = arrivingBus.dirTag;
 							}							
 						}
+						arrivingTransport.routeTag = (predictedRoute.routeTag);	
 						arrivingTransport.routeTitle = predictedRoute.routeTitle;
 						arrivingTransport.stopTitle = predictedRoute.stopTitle;
 						arrivingTransport.stopTag = predictedRoute.stopTag;
@@ -435,7 +446,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	class SubwayPrediction extends AsyncTask<String, Integer, ArrivingTransport> {
 		
 		protected ArrivingTransport doInBackground(String... params) {
-			SubwayJsonParser subwayParser = new SubwayJsonParser(arrivingBus.routeTag.get(0) , params[0], arrivingBus.direction, arrivingBus.routeTitle);
+			SubwayJsonParser subwayParser = new SubwayJsonParser(arrivingBus.routeTag , params[0], arrivingBus.direction, arrivingBus.routeTitle);
 			subwayParser.parseSubwayInfo();
 			return subwayParser.getArrivingTransport(); 
 		}
@@ -456,7 +467,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 
 		@Override
 		protected ArrivingTransport doInBackground(String... params) {		 
-			CommuterRailParser commRailParser = new CommuterRailParser(arrivingBus.routeTag.get(0), params[0], arrivingBus.direction, arrivingBus.routeTitle);
+			CommuterRailParser commRailParser = new CommuterRailParser(arrivingBus.routeTag, params[0], arrivingBus.direction, arrivingBus.routeTitle);
 			commRailParser.parseCommuterRailInfo();
 			return commRailParser.getArrivingTransport();
 		}

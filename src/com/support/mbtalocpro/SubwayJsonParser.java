@@ -82,15 +82,15 @@ public class SubwayJsonParser {
 			String tempStringArray[] = destination.split(" ");
 			destination = tempStringArray[0]; 		//trying to get the first word in a destination
 			if(destination.equalsIgnoreCase(direction)) {
+				Transport transport = new Transport();
 				if(!trip.isNull("Position")) {
-					JSONObject position = (JSONObject) trip.getJSONObject("Position");
-					Transport transport = new Transport();
+					JSONObject position = (JSONObject) trip.getJSONObject("Position");					
 					Long timestamp = position.getLong("Timestamp");
-					transport.secSinceReport = (int) Math.abs(timestamp - currentTime);
+					transport.secondsSinceLastReported = (int) Math.abs(timestamp - currentTime);
 					transport.lat = position.getDouble("Lat"); 
 					transport.lng = position.getDouble("Long");
 					transport.heading = position.getInt("Heading");
-					arrivingTransport.vehicles.add(transport);
+					
 				}			
 				arrivingTransport.dirTag = destination;
 				arrivingTransport.direction = destination;
@@ -102,10 +102,11 @@ public class SubwayJsonParser {
 						arrivingTransport.stopTag = stopNames;
 						int seconds = prediction.getInt("Seconds");						
 						int minutes = (int) Math.ceil(seconds/60);
-						arrivingTransport.timeInSeconds.add(seconds);
-						arrivingTransport.routeTag.add(trainNo);
+						transport.timeOfArrival = (seconds);
+						arrivingTransport.routeTag = (trainNo);
 					}
 				}
+				arrivingTransport.vehicles.add(transport);
 			}
 		}
 	}	

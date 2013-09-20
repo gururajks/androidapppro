@@ -52,7 +52,7 @@ public class MbtaGpsFeedParser {
 						}
 						attributeValue = xmlParser.getAttributeValue(null, "secsSinceReport");
 						if(attributeValue != null) {						
-							bus.secSinceReport = Integer.valueOf(attributeValue);
+							bus.secondsSinceLastReported = Integer.valueOf(attributeValue);
 						}
 						attributeValue = xmlParser.getAttributeValue(null, "predictable");
 						if(attributeValue != null) {						

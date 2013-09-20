@@ -104,9 +104,9 @@ public class SubwayJsonParser {
 						int minutes = (int) Math.ceil(seconds/60);
 						transport.timeOfArrival = (seconds);
 						arrivingTransport.routeTag = (trainNo);
+						arrivingTransport.vehicles.add(transport);
 					}
-				}
-				arrivingTransport.vehicles.add(transport);
+				}				
 			}
 		}
 	}	

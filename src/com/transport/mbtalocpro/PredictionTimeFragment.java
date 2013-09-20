@@ -2,6 +2,8 @@ package com.transport.mbtalocpro;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -37,8 +39,10 @@ public class PredictionTimeFragment extends Fragment {
 		  
 		  ListView listView = (ListView) view.findViewById(R.id.predictedItem);
 		  TextView emptyView = (TextView) view.findViewById(R.id.empty);
-		  PredictionTimeListAdapter minutesAdapter = new PredictionTimeListAdapter(context, arrivingBus, prediction_time_format);
 		  
+		  Collections.sort(arrivingBus.vehicles);
+		  
+		  PredictionTimeListAdapter minutesAdapter = new PredictionTimeListAdapter(context, arrivingBus, prediction_time_format);		  
 		  listView.setAdapter(minutesAdapter);
 		  listView.setEmptyView(emptyView);
 		  

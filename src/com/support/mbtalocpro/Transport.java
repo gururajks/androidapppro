@@ -2,7 +2,7 @@ package com.support.mbtalocpro;
 
 import java.io.Serializable;
 
-public class Transport implements Serializable {
+public class Transport implements Serializable, Comparable<Transport> {
 	public int id;
 	public String routeTag;
 	public String routeTitle;
@@ -14,5 +14,11 @@ public class Transport implements Serializable {
 	public boolean isPredictable;
 	public int heading;	
 	public int timeOfArrival;
-	public String vehicleId;	
+	public String vehicleId;
+	
+	@Override
+	public int compareTo(Transport transport) {		
+		int transportTime = ((Transport) transport).timeOfArrival;		
+		return this.timeOfArrival - transportTime;
+	}	
 }

@@ -17,9 +17,12 @@ import com.support.mbtalocpro.TransportModes;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.app.ActionBar; 
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,10 +36,20 @@ public class CommRailList extends FragmentActivity {
 	ArrayList<String> railList;
 	String transportationType;
 	int BUSLIST = 1;
+	
+	//Suppressing it as the action bar is only used if the phone OS is over Honeycomb
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mbta_bus_list);
+		
+		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar actionBar = getActionBar();
+			actionBar.setDisplayHomeAsUpEnabled(true);			
+		}
+		
+		
 		Intent intent = getIntent();
 		transportationType = intent.getStringExtra("transportationType");
 		railList = new ArrayList<String>();
@@ -132,27 +145,40 @@ public class CommRailList extends FragmentActivity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if(item.getItemId() == R.id.bus_list_menu) {
 			Intent intent = new Intent(this,MbtaBusList.class);
-			startActivityForResult(intent, BUSLIST);
+			startActivity(intent);
 		}		
 		if(item.getItemId() == R.id.comm_rail_list_menu) {
 			Intent intent = new Intent(this,CommRailList.class);
+			//Clear all the activities in this task and the ones above it and reset the task
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 			intent.putExtra("transportationType", "Commuter Rail");
-			startActivityForResult(intent, BUSLIST);
+			startActivity(intent);
 		}		
 		if(item.getItemId() == R.id.subway_list_menu) {
 			Intent intent = new Intent(this,CommRailList.class);
+			//Clear all the activities in this task and the ones above it and reset the task
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 			intent.putExtra("transportationType", "Subway");
-			startActivityForResult(intent, BUSLIST);
+			startActivity(intent);
 		}		
 		if(item.getItemId() == R.id.settings_menu) {
 			Intent intent = new Intent(this,Settings.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY); 
 			startActivity(intent);
 		}			
+		if(item.getItemId() == R.id.fav_list_menu) {
+			Intent intent = new Intent(this,FavouriteBusList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+		}
 		if(item.getItemId() == R.id.map_menu) {
 			Intent intent = new Intent(this,RouteStopMap.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(intent);
+		}
+		if(item.getItemId() == android.R.id.home) {
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
 		}
 		return super.onMenuItemSelected(featureId, item);		
 	}

@@ -37,6 +37,8 @@ import com.support.mbtalocpro.Route;
 import com.support.mbtalocpro.Stop;
 import com.transport.mbtalocpro.PredictionTimeFragment.PredictedTimeFragmentItemSelectedListener;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -53,6 +55,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -81,10 +84,17 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	RoutesPointReceiver routesReceiver;
 	private int firstTimeRefreshFlag;			//Flag that keeps a check on the refresh button hit
 	
-    @Override
+	//Suppressing it as the action bar is only used if the phone OS is over Honeycomb	
+    @SuppressLint("NewApi")
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_time);
+        
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar actionBar = getActionBar();
+			actionBar.setDisplayHomeAsUpEnabled(true);			 
+		}
         
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         firstTimeRefreshFlag = 0;
@@ -125,41 +135,44 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	    	if(gMap != null) {
 	    		gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 	    		
-	    		gps_menu_setting = sharedPref.getBoolean(GPS_MENU_KEY, true);
-	    		traffic_menu_setting = sharedPref.getBoolean(TRAFFIC_MENU_KEY, false);	    		
+	    		gps_menu_setting = sharedPref.getBoolean(GPS_MENU_KEY, true);	    			    		
 	    		gMap.setMyLocationEnabled(gps_menu_setting);
-	    		gMap.setTrafficEnabled(traffic_menu_setting);
+	    		
 	    		//For setting the initial camera bounds for the map
 	    		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.36,-71.1), 10));
 	    		gMap.setOnMarkerClickListener(this);	 
 	    		if(arrivingBus.transportType.equalsIgnoreCase("Bus")) {
+	    			//Traffic layer is for buses only as it does not affect neither of the train systems	    			
+	    			traffic_menu_setting = sharedPref.getBoolean(TRAFFIC_MENU_KEY, false);
+		    		gMap.setTrafficEnabled(traffic_menu_setting);
 	            	getFeeds();	//this is for the buses  
 	            }
-	            if(arrivingBus.transportType.equalsIgnoreCase("Subway")) {
-	            	for(Transport train:arrivingBus.vehicles) {
-	            		createGpsMarker(train);//this is for trains
-	            	}	            		
-	            	createStopMarker(arrivingBus);
-	            	if(routeTag!=null) {
-	            		displayTrainRouteLines(routeTag);           			            		
-	            	}
-	            }
-	            if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
-	            	for(Transport train:arrivingBus.vehicles) 
-	            		createGpsMarker(train);//this is for trains
-	            	if(routeTag!=null) {
-	            		displayTrainRouteLines(routeTag);   
-	            	}
-	            }
+	    		else {
+	    			drawRailLocations(arrivingBus);	    			
+	    		}	            
 	    	} 
 	    } 		
 	}
     
     
-    
-    
-    public void displayTrainRouteLines(String routeTag) {
-    	
+    /*
+     * Drawing the rail locations
+     * It includes subway and commuter rails    
+     */
+    private void drawRailLocations(ArrivingTransport arrivingBus) {    	
+    	for(Transport train:arrivingBus.vehicles) {
+    		createGpsMarker(train);//this is for train
+    	}
+    	if(arrivingBus.transportType.equalsIgnoreCase("Subway")) {		//draw stop locations for subway as commuter rail the info is not known
+    		createStopMarker(arrivingBus);
+    	}
+    	if(routeTag!=null) {
+    		displayTrainRouteLines(routeTag);           			            		
+    	}		
+	}
+
+
+	public void displayTrainRouteLines(String routeTag) {    	
     	Intent intent = new Intent(this, DatabaseQueryService.class);
     	intent.putExtra(DatabaseQueryService.INCOMING_INTENT,routeTag);
     	startService(intent);	
@@ -219,7 +232,9 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 						if(busInfo.isPredictable == true) {
 							latList.add(busInfo.lat);
 							lngList.add(busInfo.lng);
-							if(arrivingBus.dirTag.equalsIgnoreCase(busInfo.dirTag)) createGpsMarker(busInfo);
+							if(arrivingBus.dirTag.equalsIgnoreCase(busInfo.dirTag)) {
+								createGpsMarker(busInfo);
+							}
 						}														
 					}
 					//Check if the lists are not empty , move the camera to accomodate all the buses visible
@@ -300,15 +315,16 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			MarkerOptions mOptions = new MarkerOptions();
 			mOptions.position(point);
 			if(transportInfo.secondsSinceLastReported > 0) {
-				mOptions.title("GPS Position Last Reported: " +transportInfo.secondsSinceLastReported +" seconds"); 
+				mOptions.title("GPS Last Reported: " +transportInfo.secondsSinceLastReported +" seconds"); 
 			}
 			else {
-				mOptions.title("GPS Position Last Reported: Not known");
+				mOptions.title("GPS Last Reported: Time not reported");
 			}
-			if(transportInfo.dirTag != null)
+			if(transportInfo.dirTag != null) 
 				mOptions.snippet(transportInfo.dirTag);
-			else 
-				mOptions.snippet("Not Reporting");
+			else {
+				mOptions.snippet("Direction: Not Reporting");
+			}				
 			//rotating the bus according to the direction 
 			Bitmap bmpOriginal = BitmapFactory.decodeResource(this.getResources(), R.drawable.van_bus_icon);
 			Bitmap bmResult = Bitmap.createBitmap(bmpOriginal.getWidth(), bmpOriginal.getHeight(), Bitmap.Config.ARGB_8888);
@@ -354,31 +370,54 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if(item.getItemId() == R.id.bus_list_menu) {
 			Intent intent = new Intent(this,MbtaBusList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
-			finish();
+		}		
+		if(item.getItemId() == R.id.comm_rail_list_menu) {
+			Intent intent = new Intent(this,CommRailList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.putExtra("transportationType", "Commuter Rail");
+			startActivity(intent);
+		}		
+		if(item.getItemId() == R.id.subway_list_menu) {
+			Intent intent = new Intent(this,CommRailList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.putExtra("transportationType", "Subway");
+			startActivity(intent);
 		}		
 		if(item.getItemId() == R.id.settings_menu) {
 			Intent intent = new Intent(this,Settings.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY); 
 			startActivity(intent);
-		}		
+		}			
 		if(item.getItemId() == R.id.fav_list_menu) {
-			finish();
+			Intent intent = new Intent(this,FavouriteBusList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+		}
+		if(item.getItemId() == R.id.map_menu) {
+			Intent intent = new Intent(this,RouteStopMap.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			startActivity(intent);
+		}
+		if(item.getItemId() == android.R.id.home) {
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
 		}
 		if(item.getItemId() == R.id.refresh_menu) {
-			firstTimeRefreshFlag  = 1;
-			if(gMap != null) gMap.clear();
+			firstTimeRefreshFlag  = 1; 
+			if(gMap != null) {
+				gMap.clear();
+			}
 			if(arrivingBus.transportType.equalsIgnoreCase("Bus")) {
 				downloadBusPredictions();
 				getFeeds();		//feeds are exclusive for bus predictions only
 			}  
 			if(arrivingBus.transportType.equalsIgnoreCase("Subway")) {
-				new SubwayPrediction().execute(arrivingBus.stopTag);
-				drawMap(arrivingBus);
+				new SubwayPrediction().execute(arrivingBus.stopTag);				
 			}
 			if(arrivingBus.transportType.equalsIgnoreCase("Commuter Rail")) {
-				new CommuterRailPrediction().execute(arrivingBus.stopTag);
-				drawMap(arrivingBus);
+				new CommuterRailPrediction().execute(arrivingBus.stopTag);				
 			}			
 		}
 		return super.onMenuItemSelected(featureId, item);		
@@ -460,7 +499,8 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			if(arrivingTransport != null) {				
 				arrivingTransport.stopLat = arrivingBus.stopLat;
 				arrivingTransport.stopLng = arrivingBus.stopLng;
-				populateFragments(arrivingTransport);				
+				populateFragments(arrivingTransport);		
+				drawRailLocations(arrivingTransport);
 			}
 		}		 
 	}
@@ -482,6 +522,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 				arrivingTransport.stopLat = arrivingBus.stopLat;
 				arrivingTransport.stopLng = arrivingBus.stopLng;
 				populateFragments(arrivingTransport);
+				drawRailLocations(arrivingTransport);
 			}
 		}	
 		

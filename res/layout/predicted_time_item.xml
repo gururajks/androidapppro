@@ -10,40 +10,58 @@
          android:id="@+id/routeNoImage" 
          android:layout_alignParentLeft="true"
          android:layout_height="match_parent"
+         android:layout_centerVertical="true"
          android:layout_width="75dp"
          android:orientation="vertical"
-         android:padding="5dip">
+         android:padding="2dip">
          <ImageView 
 	        android:id="@+id/pinImage"
 	        android:layout_alignParentTop="true"
-	        android:layout_centerHorizontal="true"
+	        android:layout_centerInParent="true"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:src="@drawable/ic_device_access_time"/>
          <TextView 
 	        android:id="@+id/routedisplay"
 	        android:layout_below="@+id/pinImage"
-	        android:layout_centerHorizontal="true"
+	        android:layout_centerInParent="true"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:textStyle="bold"
 	        android:textSize="12sp" />	   
          
      </RelativeLayout>
      
-     
-     <TextView 
-         android:id="@+id/predictedTimeItem"
+     <RelativeLayout 
          android:layout_toRightOf="@+id/routeNoImage"
          android:layout_toLeftOf="@+id/timeItem"
-         android:layout_height="wrap_content"
-         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
          android:layout_centerVertical="true"
-         android:textSize="12sp"/>
+         android:layout_width="wrap_content"
+         android:padding="1dip">
+         <TextView 
+	         android:id="@+id/predictedTimeItemDirection"	  
+	         android:layout_alignParentTop="true"       
+	         android:layout_height="wrap_content"
+	         android:layout_width="wrap_content"
+	         android:layout_centerVertical="true"	         
+	         android:textSize="12sp"/>
+         <TextView 
+	         android:id="@+id/predictedTimeItemStop"
+	         android:layout_height="wrap_content"
+	         android:layout_width="wrap_content"
+	         android:layout_alignLeft="@+id/predictedTimeItemDirection"
+	         android:layout_below="@+id/predictedTimeItemDirection"
+	         android:layout_centerVertical="true"
+	         android:textSize="12sp"/>
+     </RelativeLayout>
+     
      
      <RelativeLayout
          android:id="@+id/timeItem" 
          android:layout_alignParentRight="true"
-         android:layout_width="75dp"
+         android:layout_width="100dp"
+         android:layout_centerVertical="true"
          android:layout_height="match_parent">
          
          <TextView 

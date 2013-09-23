@@ -26,6 +26,8 @@ import com.support.mbtalocpro.Stop;
 import com.transport.mbtalocpro.BusRouteDialog.BusRouteDialogListener;
 
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +35,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -56,10 +59,17 @@ public class RouteStopMap extends UrlConnector implements BusRouteDialogListener
 	
 	CharSequence[] routeList;
 	
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_route_stop_map);
+		
+		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar actionBar = getActionBar();
+			actionBar.setDisplayHomeAsUpEnabled(true);			
+		}
+		
 		setupMap();
 		busRouteDisplay = (Button) findViewById(R.id.busNo);
 		busRoutesTitle = new ArrayList<String>();
@@ -100,23 +110,25 @@ public class RouteStopMap extends UrlConnector implements BusRouteDialogListener
 	@Override
 	public void onSelectRoute(CharSequence item) {
 		URL url;
-		gMap.clear();		//clearing the map
-		busRouteDisplay.setText("Bus Route No: "+item);
-		if(!busRoutesTitle.isEmpty()) {
-			int index = busRoutesTitle.indexOf((String)item);
-			SharedPreferences menuPref = getSharedPreferences("MenuSettings", MODE_PRIVATE);
-			SharedPreferences.Editor busNo = menuPref.edit();
-			busNo.putString("busNo", (String)item);
-			busNo.commit();
-			progressDialog = ProgressDialog.show(this, "Loading...", "Getting Data");
-			try {			
-				url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a="+agency+"&r="+busRoutesTag.get(index));
-				new DownloadRoutes().execute(url);
-			} catch (MalformedURLException e) {	
-				e.printStackTrace();
-			} catch(NullPointerException e) {
-				e.printStackTrace();
-			}		
+		if(gMap != null) {
+			gMap.clear();		//clearing the map
+			busRouteDisplay.setText("Bus Route No: "+item);
+			if(!busRoutesTitle.isEmpty()) {
+				int index = busRoutesTitle.indexOf((String)item);
+				SharedPreferences menuPref = getSharedPreferences("MenuSettings", MODE_PRIVATE);
+				SharedPreferences.Editor busNo = menuPref.edit();
+				busNo.putString("busNo", (String)item);
+				busNo.commit();
+				progressDialog = ProgressDialog.show(this, "Loading...", "Getting Data");
+				try {			
+					url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a="+agency+"&r="+busRoutesTag.get(index));
+					new DownloadRoutes().execute(url);
+				} catch (MalformedURLException e) {	
+					e.printStackTrace();
+				} catch(NullPointerException e) {
+					e.printStackTrace();
+				}		
+		}
 		}
 	}
 	
@@ -210,7 +222,7 @@ public class RouteStopMap extends UrlConnector implements BusRouteDialogListener
 		}
 		
 		protected void onCancelled() {
-        	progressDialog.dismiss();
+        	progressDialog.dismiss(); 
         }
 		
 		
@@ -226,18 +238,41 @@ public class RouteStopMap extends UrlConnector implements BusRouteDialogListener
 		getMenuInflater().inflate(R.menu.activity_menu, menu);
 		return true;
 	}
-	
+	 
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if(item.getItemId() == R.id.bus_list_menu) {
-			finish();
+			Intent intent = new Intent(this,MbtaBusList.class);	
+			intent.putExtra("transportationType", "Bus");
+			startActivity(intent);
+		}		
+		if(item.getItemId() == R.id.comm_rail_list_menu) {
+			Intent intent = new Intent(this,CommRailList.class);			
+			intent.putExtra("transportationType", "Commuter Rail");
+			startActivity(intent);
+		}		
+		if(item.getItemId() == R.id.subway_list_menu) {
+			Intent intent = new Intent(this,CommRailList.class);			
+			intent.putExtra("transportationType", "Subway");
+			startActivity(intent);
 		}		
 		if(item.getItemId() == R.id.settings_menu) {
 			Intent intent = new Intent(this,Settings.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(intent);
-		}		
+		}			
 		if(item.getItemId() == R.id.fav_list_menu) {
-			finish();
+			Intent intent = new Intent(this,FavouriteBusList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+		}
+		if(item.getItemId() == R.id.map_menu) {
+			Intent intent = new Intent(this,RouteStopMap.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			startActivity(intent);
+		}
+		if(item.getItemId() == android.R.id.home) {
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
 		}
 		return super.onMenuItemSelected(featureId, item);		
 	}

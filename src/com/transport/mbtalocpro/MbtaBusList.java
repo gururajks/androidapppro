@@ -12,9 +12,12 @@ import com.support.mbtalocpro.DatabaseManager;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,18 +28,26 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class MbtaBusList extends Activity {
+public class MbtaBusList extends UrlConnector {
 	
 	public final String agency ="mbta";
 	ListView listView;
 	ArrayList<String> busRouteTagList = new ArrayList<String>();
 	ArrayList<String> busRouteTitleList = new ArrayList<String>();
 	int savedCbState[] = null;
+	
+	//Suppressing it as the action bar is only used if the phone OS is over Honeycomb
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mbta_bus_list);
-						
+		
+		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar actionBar = getActionBar();
+			actionBar.setDisplayHomeAsUpEnabled(true);			
+		}
+		
 		listView = (ListView) findViewById(R.id.buslist);		
 		URL url;
 		try {			
@@ -82,8 +93,7 @@ public class MbtaBusList extends Activity {
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 							String busTag = busRouteTagList.get(position);
 							String busName = busRouteTitleList.get(position);
-							Intent intent = new Intent(getApplicationContext(), BusDirectionList.class);
-							intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+							Intent intent = new Intent(getApplicationContext(), BusDirectionList.class);							
 							intent.putExtra("routeTag", busTag);
 							intent.putExtra("routeTitle", busName);
 							startActivity(intent);
@@ -137,18 +147,40 @@ public class MbtaBusList extends Activity {
 	}
 	
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {			
+		if(item.getItemId() == R.id.bus_list_menu) {
+			Intent intent = new Intent(this,MbtaBusList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+			intent.putExtra("transportationType", "Bus");
+			startActivity(intent); 
+		}		 
+		if(item.getItemId() == R.id.comm_rail_list_menu) {
+			Intent intent = new Intent(this,CommRailList.class); 
+			intent.putExtra("transportationType", "Commuter Rail");
+			startActivity(intent);
+		}		
+		if(item.getItemId() == R.id.subway_list_menu) {
+			Intent intent = new Intent(this,CommRailList.class);
+			intent.putExtra("transportationType", "Subway");
+			startActivity(intent);
+		}		
 		if(item.getItemId() == R.id.settings_menu) {
 			Intent intent = new Intent(this,Settings.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(intent);
-		}		
+		}			
 		if(item.getItemId() == R.id.fav_list_menu) {
-			finish();
+			Intent intent = new Intent(this,FavouriteBusList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
 		}
 		if(item.getItemId() == R.id.map_menu) {
 			Intent intent = new Intent(this,RouteStopMap.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(intent);
+		}
+		if(item.getItemId() == android.R.id.home) {
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
 		}
 		return super.onMenuItemSelected(featureId, item);		
 	}

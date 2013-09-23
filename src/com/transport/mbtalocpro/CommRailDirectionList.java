@@ -23,6 +23,8 @@ import com.transport.mbtalocpro.BusStopsDialog.BusStopsDialogListener;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -31,6 +33,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,10 +55,16 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 	double stopLng;
 	ProgressDialog progressDialog;
 	
+	//Suppressing it as the action bar is only used if the phone OS is over Honeycomb
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bus_direction_list);
+		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar actionBar = getActionBar();
+			actionBar.setDisplayHomeAsUpEnabled(true);			
+		}
 		
 		Intent intent = getIntent();
 		commRailTag = intent.getStringExtra("commrailid");
@@ -288,28 +297,40 @@ public class CommRailDirectionList extends FragmentActivity implements BusStopsD
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if(item.getItemId() == R.id.bus_list_menu) {
 			Intent intent = new Intent(this,MbtaBusList.class);
-			startActivityForResult(intent, BUSLIST);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
 		}		
 		if(item.getItemId() == R.id.comm_rail_list_menu) {
 			Intent intent = new Intent(this,CommRailList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			intent.putExtra("transportationType", "Commuter Rail");
-			startActivityForResult(intent, BUSLIST);
+			startActivity(intent);
 		}		
 		if(item.getItemId() == R.id.subway_list_menu) {
 			Intent intent = new Intent(this,CommRailList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			intent.putExtra("transportationType", "Subway");
-			startActivityForResult(intent, BUSLIST);
+			startActivity(intent);
 		}		
 		if(item.getItemId() == R.id.settings_menu) {
 			Intent intent = new Intent(this,Settings.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY); 
 			startActivity(intent);
 		}			
-		if(item.getItemId() == R.id.map_menu) {
-			Intent intent = new Intent(this,RouteStopMap.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+		if(item.getItemId() == R.id.fav_list_menu) {
+			Intent intent = new Intent(this,FavouriteBusList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
 		}
-		return super.onMenuItemSelected(featureId, item);		
+		if(item.getItemId() == R.id.map_menu) {
+			Intent intent = new Intent(this,RouteStopMap.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			startActivity(intent);
+		}
+		if(item.getItemId() == android.R.id.home) {
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		}
+		return super.onMenuItemSelected(featureId, item);
 	}
 }

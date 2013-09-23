@@ -109,7 +109,7 @@ public class FavouriteBusList extends UrlConnector {
 		  
 		ListView listView = (ListView) findViewById(R.id.fav_bus_list);
 		TextView emptyView = (TextView) findViewById(R.id.empty);
-		favoritesAdapter = new FavoriteListAdapter(getApplicationContext(), favoriteObjectList);
+		favoritesAdapter = new FavoriteListAdapter(this, favoriteObjectList);
 				
 		listView.setAdapter(favoritesAdapter); 
 		listView.setEmptyView(emptyView);
@@ -333,31 +333,34 @@ public class FavouriteBusList extends UrlConnector {
 	public void onResume() {		
 		displayFavoriteRoutes();
 		super.onResume();
-	} 
+	}  
 	
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if(item.getItemId() == R.id.bus_list_menu) {
 			Intent intent = new Intent(this,MbtaBusList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			startActivityForResult(intent, BUSLIST);
 		}		
 		if(item.getItemId() == R.id.comm_rail_list_menu) {
 			Intent intent = new Intent(this,CommRailList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			intent.putExtra("transportationType", "Commuter Rail");
-			startActivityForResult(intent, BUSLIST);
+			startActivityForResult(intent, BUSLIST);  
 		}		
 		if(item.getItemId() == R.id.subway_list_menu) {
 			Intent intent = new Intent(this,CommRailList.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			intent.putExtra("transportationType", "Subway");
 			startActivityForResult(intent, BUSLIST);
 		}		
 		if(item.getItemId() == R.id.settings_menu) {
 			Intent intent = new Intent(this,Settings.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			startActivity(intent);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY); 
+			startActivity(intent); 
 		}			
 		if(item.getItemId() == R.id.map_menu) {
-			Intent intent = new Intent(this,RouteStopMap.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			Intent intent = new Intent(this,RouteStopMap.class);			
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(intent);
 		}
 		return super.onMenuItemSelected(featureId, item);		

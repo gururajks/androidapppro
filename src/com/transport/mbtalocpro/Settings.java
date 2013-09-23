@@ -20,6 +20,8 @@ public class Settings extends PreferenceActivity {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
 		
+		
+		
 		Preference about_button = (Preference) getPreferenceManager().findPreference("about");
 		if(about_button != null) {
 			about_button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

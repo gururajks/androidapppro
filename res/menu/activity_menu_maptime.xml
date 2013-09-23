@@ -4,11 +4,26 @@
         android:title="Bus Routes/Stops"
         android:icon="@drawable/ic_maps_icon" 
         android:showAsAction="never"/>
-    <item
-        android:id="@+id/bus_list_menu"        
+   	<item 
+        android:id="@+id/transportlist_menu"
         android:icon="@drawable/ic_4_collections_view_as_list_wh"
-        android:title="Buses"
-        android:showAsAction="always"/>
+        android:showAsAction="always"
+        android:title="Routes List">
+        <menu>
+		    <item
+		        android:id="@+id/bus_list_menu"        
+		        android:icon="@drawable/ic_4_collections_view_as_list_wh"
+		        android:title="Buses"/>
+		    <item
+		        android:id="@+id/comm_rail_list_menu"        
+		        android:icon="@drawable/ic_4_collections_view_as_list_wh"
+		        android:title="Commuter Rail"/>
+		    <item
+		        android:id="@+id/subway_list_menu"       
+		        android:icon="@drawable/ic_4_collections_view_as_list_wh"
+		        android:title="Subway"/>
+	    </menu>
+    </item>
     <item
         android:id="@+id/fav_list_menu"
         android:icon="@drawable/ic_9_av_make_available_offline_wh"

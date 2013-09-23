@@ -4,6 +4,7 @@ import com.support.mbtalocpro.ArrivingTransport;
 import com.support.mbtalocpro.Transport;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +48,8 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 			view = inflator.inflate(R.layout.predicted_time_item, viewGroup, false);
 			
 			viewHolder = new ViewHolder();
-			viewHolder.timeItem = (TextView) view.findViewById(R.id.predictedTimeItem);
+			viewHolder.timeItemDirection = (TextView) view.findViewById(R.id.predictedTimeItemDirection);
+			viewHolder.timeItemStop = (TextView) view.findViewById(R.id.predictedTimeItemStop);
 			viewHolder.timeDisplayItem = (TextView) view.findViewById(R.id.predictedTimeDisplayItem);
 			viewHolder.routeNoDisplay = (TextView) view.findViewById(R.id.routedisplay);			
 			view.setTag(viewHolder);
@@ -55,15 +57,21 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 		else {
 			viewHolder = (ViewHolder) view.getTag();			
 		}
-		String routeInfo = arrivingBus.direction + " \n@ " + arrivingBus.stopTitle;
+		String directionInfo = arrivingBus.direction;
+		String stopInfo = arrivingBus.stopTitle;
 		Transport transport = arrivingBus.vehicles.get(index);
 		String eta = String.valueOf(transport.timeOfArrival);
 		String routeNo = arrivingBus.routeTitle;
 				 
-		viewHolder.timeItem.setText(routeInfo);
+		viewHolder.timeItemDirection.setText(directionInfo);
+		viewHolder.timeItemStop.setText(stopInfo);
 		
 		eta = formatTime(eta);
 		viewHolder.timeDisplayItem.setText(eta);
+		//Reduce font if the predicted time format is mm:ss
+		if(prediction_time_format.equalsIgnoreCase("1")) {				//Minutes with seconds
+			viewHolder.timeDisplayItem.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40);
+		}
 		
 		viewHolder.routeNoDisplay.setText(routeNo);
 		return view;
@@ -85,7 +93,8 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 	}
 	
 	private static class ViewHolder {
-		public TextView timeItem;
+		public TextView timeItemDirection;
+		public TextView timeItemStop;
 		public TextView timeDisplayItem;
 		public TextView routeNoDisplay;
 		

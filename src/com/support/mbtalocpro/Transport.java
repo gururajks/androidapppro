@@ -16,6 +16,14 @@ public class Transport implements Serializable, Comparable<Transport> {
 	public int timeOfArrival;
 	public String vehicleId;
 	
+	public Transport() {
+		routeTag = "";
+		routeTitle = "";
+		dirTag = "";
+		dirTitle = "";		
+	}
+	
+	
 	@Override
 	public int compareTo(Transport transport) {		
 		int transportTime = ((Transport) transport).timeOfArrival;		

@@ -9,13 +9,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
+import android.util.TypedValue;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 public class ImageLoader {
 	
+	Resources resources;
 	//Add the image into a memory cache so that it does not load everytime the user scrolls
 	private LruCache<String, Bitmap> mMemoryCache;
 	
@@ -43,6 +46,7 @@ public class ImageLoader {
 		final String imageKey = String.valueOf(index);
 		final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
+		this.resources = resources;
 	    // Use 1/8th of the available memory for this memory cache.
 	    final int cacheSize = maxMemory / 8;
 
@@ -87,7 +91,12 @@ public class ImageLoader {
 			bitmapOptions.inJustDecodeBounds = false;
 			Bitmap image = BitmapFactory.decodeFile(params[0], bitmapOptions);
 			
-			Bitmap resizedImage = Bitmap.createScaledBitmap(image, image.getHeight(), image.getWidth(), true);
+			int imagePixel = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 65, resources.getDisplayMetrics());
+			Bitmap resizedImage = Bitmap.createScaledBitmap(image, imagePixel, imagePixel, true);
+			
+			
+					
+			//Bitmap resizedImage = ThumbnailUtils.extractThumbnail(rescaledImage, imagePixel, imagePixel);
 			
 			addBitmapToMemoryCache(params[1], resizedImage); 
 			return resizedImage;

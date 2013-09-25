@@ -20,9 +20,13 @@ public class ArrivingTransport implements Serializable {
 	public ArrayList<Transport> vehicles;
 	
 	public ArrivingTransport() {
-		//timeInSeconds = new ArrayList<Integer>();
-		//routeTag = new ArrayList<String>();
-		//vehicleIds = new ArrayList<String>();
+		dirTag = "";
+		direction = "";
+		routeTitle = "";
+		routeTag = "";
+		transportType = "";
+		stopTag = "";
+		stopTitle = "";
 		vehicles = new ArrayList<Transport>();
 	} 
 

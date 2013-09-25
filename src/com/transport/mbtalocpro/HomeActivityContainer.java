@@ -80,7 +80,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	private boolean gps_menu_setting; 
 	private boolean traffic_menu_setting;
 	private String prediction_time_format;
-	SharedPreferences sharedPref;
+	SharedPreferences sharedPref; 
 	RoutesPointReceiver routesReceiver;
 	private int firstTimeRefreshFlag;			//Flag that keeps a check on the refresh button hit
 	
@@ -105,6 +105,12 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
         //Prediction time part
         Intent intent = getIntent();
         arrivingBus = (ArrivingTransport) intent.getSerializableExtra("arrivingBus");
+        
+        //If null finish activity and return to the previous activity
+        if(arrivingBus == null) {
+        	Toast.makeText(getApplicationContext(), "No results reported", Toast.LENGTH_SHORT).show();
+        	finish();
+        }
         
         IntentFilter intentFilter = new IntentFilter(RoutesPointReceiver.POINT_RECEIVER_FLAG);        
         routesReceiver = new RoutesPointReceiver();
@@ -197,7 +203,9 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			new DownloadVehicleLocation().execute(url);
 		} catch (MalformedURLException e) {	
 			e.printStackTrace();
-		}	
+		} catch (NullPointerException e) {
+        	Toast.makeText(getApplicationContext(), "No results reported", Toast.LENGTH_SHORT).show();
+        }
 	}
 	
 	public void getBusRouteData(String routeTag) {
@@ -207,7 +215,9 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			new DownloadRoutes().execute(url);
 		} catch (MalformedURLException e) {	
 			e.printStackTrace();
-		}
+		} catch (NullPointerException e) {
+        	Toast.makeText(getApplicationContext(), "No results reported", Toast.LENGTH_SHORT).show();
+        }
 	}
 	
 	private class DownloadVehicleLocation extends AsyncTask<URL, Integer, ArrayList<Object>> {
@@ -218,7 +228,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
             	return downloadUrl(urls[0], 1);
             } catch (IOException e) {
                 System.out.println("Unable to retrieve web page. URL may be invalid.");
-            }
+            } 
 			return null;
 		}		
 		

@@ -55,6 +55,9 @@ public class FavouriteBusList extends UrlConnector {
 	FavoriteListAdapter favoritesAdapter;
 	ArrayList<FavoriteListItemObject> favoriteObjectList;
 	ProgressDialog progressDialog = null;
+	DownloadBusPredictions downloadBusPredictions;
+	DownloadSubwayPredictions downloadSubwayPredictions;
+	DownloadCommuterRailPredictions downloadCommuterRailPredictions;
 	
 	
 	String mbtaTypes[] = new String[] {"Bus", "Subway", "Commuter Rail"}; 
@@ -131,7 +134,8 @@ public class FavouriteBusList extends UrlConnector {
 					URL url;
 					try {			 
 						url = new URL("http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=mbta&s="+choosenStop+"&r="+choosenRouteTag);
-						new DownloadBusPredictions().execute(url);
+						downloadBusPredictions = new DownloadBusPredictions();
+						downloadBusPredictions.execute(url);
 					} catch (MalformedURLException e) {	
 						e.printStackTrace();
 					}
@@ -139,13 +143,15 @@ public class FavouriteBusList extends UrlConnector {
 				
 				//Subway Transportation predictions 
 				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Subway")) {
-					new DownloadSubwayPredictions().execute(choosenRouteTitle, choosenDirectionTag, choosenStop, choosenRouteTag);
+					downloadSubwayPredictions = new DownloadSubwayPredictions();
+					downloadSubwayPredictions.execute(choosenRouteTitle, choosenDirectionTag, choosenStop, choosenRouteTag);
 				}
 				
 				//Commuter Rail Predictions 
 				if(favoriteListItemObject.transportationType.equalsIgnoreCase("Commuter Rail")) {
 					System.out.println("TRANSPORTATION: Fav" + choosenRouteTitle + choosenStop + choosenDirectionTag);
-					new DownloadCommuterRailPredictions().execute(choosenRouteTitle, choosenDirectionTag, choosenStop, choosenRouteTag);
+					downloadCommuterRailPredictions = new DownloadCommuterRailPredictions();
+					downloadCommuterRailPredictions.execute(choosenRouteTitle, choosenDirectionTag, choosenStop, choosenRouteTag);
 				}
 			}
 		});
@@ -281,8 +287,19 @@ public class FavouriteBusList extends UrlConnector {
 	
 	
 	/************************************* MENU OPTIONS ********************************/
-	
-	
+	/*
+	@Override
+	public void onBackPressed() {
+		if(downloadBusPredictions != null) {
+			downloadBusPredictions.cancel(true);
+		}
+		if(downloadSubwayPredictions != null) {
+			downloadSubwayPredictions.cancel(true);		
+		}
+		if(downloadCommuterRailPredictions != null) {
+			downloadCommuterRailPredictions.cancel(true);
+		}
+	}*/ 
 	
 	
 	@Override

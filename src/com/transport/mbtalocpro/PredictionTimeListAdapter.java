@@ -4,6 +4,7 @@ import com.support.mbtalocpro.ArrivingTransport;
 import com.support.mbtalocpro.Transport;
 
 import android.content.Context;
+import android.text.format.Time;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,7 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 			viewHolder.timeItemStop = (TextView) view.findViewById(R.id.predictedTimeItemStop);
 			viewHolder.timeDisplayItem = (TextView) view.findViewById(R.id.predictedTimeDisplayItem);
 			viewHolder.routeNoDisplay = (TextView) view.findViewById(R.id.routedisplay);			
+			viewHolder.currentTimeDisplay = (TextView) view.findViewById(R.id.currentTime);
 			view.setTag(viewHolder);
 		}	
 		else {
@@ -70,10 +72,14 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 		viewHolder.timeDisplayItem.setText(eta);
 		//Reduce font if the predicted time format is mm:ss
 		if(prediction_time_format.equalsIgnoreCase("1")) {				//Minutes with seconds
-			viewHolder.timeDisplayItem.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40);
-		}
-		
+			viewHolder.timeDisplayItem.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+		}		
 		viewHolder.routeNoDisplay.setText(routeNo);
+		
+		Time currentTime = new Time();
+		currentTime.setToNow();
+		viewHolder.currentTimeDisplay.setText("Updated :" + currentTime.format("%H:%M:%S"));
+		
 		return view;
 	}
 	
@@ -97,7 +103,7 @@ public class PredictionTimeListAdapter extends BaseAdapter {
 		public TextView timeItemStop;
 		public TextView timeDisplayItem;
 		public TextView routeNoDisplay;
-		
+		public TextView currentTimeDisplay;
 	}
 
 }

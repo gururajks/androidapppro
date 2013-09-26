@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item 
         android:id="@+id/map_menu" 
-        android:title="Bus Routes/Stops"
+        android:title="Bus Map"
         android:icon="@drawable/ic_maps_icon" 
         android:showAsAction="never"/>
    	<item 

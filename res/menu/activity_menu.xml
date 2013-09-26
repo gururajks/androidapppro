@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
    	<item 
         android:id="@+id/map_menu" 
-        android:title="Bus Routes/Stops"
+        android:title="Bus Map"
         android:icon="@drawable/ic_maps_icon" 
         android:showAsAction="never"/>
     <item 
@@ -12,15 +12,15 @@
         <menu>
 		    <item
 		        android:id="@+id/bus_list_menu"        
-		        android:icon="@drawable/ic_4_collections_view_as_list_wh"
+		        android:icon="@drawable/ic_bus"
 		        android:title="Buses"/>
 		    <item
 		        android:id="@+id/comm_rail_list_menu"        
-		        android:icon="@drawable/ic_4_collections_view_as_list_wh"
+		        android:icon="@drawable/ic_trains"
 		        android:title="Commuter Rail"/>
 		    <item
 		        android:id="@+id/subway_list_menu"       
-		        android:icon="@drawable/ic_4_collections_view_as_list_wh"
+		        android:icon="@drawable/ic_subway"
 		        android:title="Subway"/>
 	    </menu>
     </item>

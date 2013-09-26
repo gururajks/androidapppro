@@ -507,8 +507,6 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		
 		protected void onPostExecute(ArrivingTransport arrivingTransport) {
 			if(arrivingTransport != null) {				
-				arrivingTransport.stopLat = arrivingBus.stopLat;
-				arrivingTransport.stopLng = arrivingBus.stopLng;
 				populateFragments(arrivingTransport);		
 				drawRailLocations(arrivingTransport);
 			}
@@ -529,8 +527,6 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		
 		protected void onPostExecute(ArrivingTransport arrivingTransport) {
 			if(arrivingTransport != null) {				
-				arrivingTransport.stopLat = arrivingBus.stopLat;
-				arrivingTransport.stopLng = arrivingBus.stopLng;
 				populateFragments(arrivingTransport);
 				drawRailLocations(arrivingTransport);
 			}

@@ -60,6 +60,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 public class HomeActivityContainer extends UrlConnector implements PredictedTimeFragmentItemSelectedListener, 
@@ -83,13 +84,19 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 	SharedPreferences sharedPref; 
 	RoutesPointReceiver routesReceiver;
 	private int firstTimeRefreshFlag;			//Flag that keeps a check on the refresh button hit
+	private boolean progressBarFlag = false;
+	MenuItem progressBarItem;
+	
 	
 	//Suppressing it as the action bar is only used if the phone OS is over Honeycomb	
     @SuppressLint("NewApi")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_map_time);
+        setProgressBarIndeterminateVisibility(progressBarFlag);
         
         if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar actionBar = getActionBar();
@@ -260,6 +267,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 					}
 					latList.clear();
 					lngList.clear();
+					switchProgressBar(false);
 				}
 			}
 			else {
@@ -377,6 +385,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		return true;
 	}
 	
+	@SuppressLint("NewApi")
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if(item.getItemId() == R.id.bus_list_menu) {
 			Intent intent = new Intent(this,MbtaBusList.class);
@@ -416,6 +425,9 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 		}
 		if(item.getItemId() == R.id.refresh_menu) {
 			firstTimeRefreshFlag  = 1; 
+			progressBarItem = item;
+			switchProgressBar(true);
+			
 			if(gMap != null) {
 				gMap.clear();
 			}
@@ -509,6 +521,7 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			if(arrivingTransport != null) {				
 				populateFragments(arrivingTransport);		
 				drawRailLocations(arrivingTransport);
+				switchProgressBar(false);
 			}
 		}		 
 	}
@@ -529,11 +542,33 @@ public class HomeActivityContainer extends UrlConnector implements PredictedTime
 			if(arrivingTransport != null) {				
 				populateFragments(arrivingTransport);
 				drawRailLocations(arrivingTransport);
+				switchProgressBar(false);
 			}
 		}	
 		
 	}
 
+	
+	/*Start progress bar */
+	@SuppressLint("NewApi")
+	private void switchProgressBar(boolean flag) {
+		if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) { 		//for apps running in less 3.0			
+			setProgressBarIndeterminateVisibility(flag);
+		}
+		else {
+			if(progressBarItem != null){		//For android phones running greater than honeycomb 3.0			
+				if(flag == true) {
+					progressBarItem.setActionView(R.layout.progress_bar_ind);
+					progressBarItem.expandActionView();
+				}
+				else {
+					progressBarItem.collapseActionView();
+					progressBarItem.setActionView(null);
+				}
+			} 
+		}
+	}
+	
 	
 	
 	@Override

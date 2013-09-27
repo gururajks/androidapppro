@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -41,7 +42,9 @@ public class MbtaBusList extends UrlConnector {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_mbta_bus_list);
+		setProgressBarIndeterminateVisibility(true);
 		
 		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar actionBar = getActionBar();
@@ -99,6 +102,7 @@ public class MbtaBusList extends UrlConnector {
 							startActivity(intent);
 						}
 					});	
+					setProgressBarIndeterminateVisibility(false);
 				}
 			}
 			else {

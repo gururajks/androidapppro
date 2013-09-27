@@ -26,6 +26,7 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -42,7 +43,9 @@ public class CommRailList extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_mbta_bus_list);
+		setProgressBarIndeterminateVisibility(true);
 		
 		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar actionBar = getActionBar();
@@ -100,6 +103,7 @@ public class CommRailList extends FragmentActivity {
 							startActivity(intent);
 						}
 					});
+					setProgressBarIndeterminateVisibility(false);
 				}
 			}
 		}		

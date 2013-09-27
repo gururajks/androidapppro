@@ -38,25 +38,52 @@
          android:layout_centerVertical="true"
          android:layout_width="wrap_content"
          android:padding="1dip">
-         <TextView 
-	         android:id="@+id/predictedTimeItemDirection"	  
-	         android:layout_alignParentTop="true"       
-	         android:layout_height="wrap_content"
-	         android:layout_width="wrap_content"
-	         android:layout_centerVertical="true"	         
-	         android:textSize="12sp"/>
-         <TextView 
-	         android:id="@+id/predictedTimeItemStop"
-	         android:layout_height="wrap_content"
-	         android:layout_width="wrap_content"
-	         android:layout_alignLeft="@+id/predictedTimeItemDirection"
-	         android:layout_below="@+id/predictedTimeItemDirection"
-	         android:layout_centerVertical="true"
-	         android:textSize="12sp"/>         
+         
+         <LinearLayout
+             android:id="@+id/predictedTimeItemDirectionLayout" 
+            android:orientation="horizontal"
+            android:layout_alignParentTop="true"       
+            android:layout_centerVertical="true"        
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" > 
+            <ImageView 
+                android:id="@+id/direction_image"
+                android:layout_width="wrap_content"
+                android:layout_height="12sp"
+                android:maxHeight="12sp"
+                android:src="@drawable/ic_direction"/>
+         	<TextView 
+				android:id="@+id/predictedTimeItemDirection"         
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"	            
+				android:textSize="12sp"/>                 
+         </LinearLayout>
+         
+         <LinearLayout 
+            android:id="@+id/predictedTimeItemStopLayout"
+            android:orientation="horizontal"
+            android:layout_alignLeft="@+id/predictedTimeItemDirectionLayout"
+		    android:layout_below="@+id/predictedTimeItemDirectionLayout"		   	
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
+         	<ImageView 
+                android:id="@+id/stop_image"
+                android:layout_width="wrap_content"
+                android:layout_height="12sp"
+                android:maxHeight="12sp"
+                android:src="@drawable/ic_stop_sign"/>
+	         <TextView 
+		         android:id="@+id/predictedTimeItemStop"
+		         android:layout_height="wrap_content"
+		         android:layout_width="wrap_content"
+		         android:textSize="12sp"/>
+         </LinearLayout>
+         
          <TextView 
              android:id="@+id/currentTime"
-             android:layout_alignLeft="@+id/predictedTimeItemDirection"
-             android:layout_below="@+id/predictedTimeItemStop"
+             android:layout_alignLeft="@+id/predictedTimeItemDirectionLayout"
+             android:layout_below="@+id/predictedTimeItemStopLayout"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:layout_centerVertical="true"

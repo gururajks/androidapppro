@@ -92,7 +92,7 @@ public class CommRailList extends FragmentActivity {
 						railList.add(commuterRailMode.routes.routesList.get(i).routeTitle);
 					} 
 					ListView listView =(ListView) findViewById(R.id.buslist);
-					ArrayAdapter<String> railAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.bus_item, R.id.busItem, railList);
+					ArrayAdapter<String> railAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.train_item, R.id.trainItem, railList);
 					listView.setAdapter(railAdapter);		
 					listView.setOnItemClickListener(new OnItemClickListener() {
 						public void onItemClick(AdapterView<?> parent, View view, int index, long id) { 

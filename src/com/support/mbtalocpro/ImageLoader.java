@@ -59,7 +59,7 @@ public class ImageLoader {
 	    else {
 			if (cancelPotentialWork(index, imgButton)) {
 		        final AsynchronousImageLoader task = new AsynchronousImageLoader(imgButton);
-		        Bitmap placeHolderImage = BitmapFactory.decodeResource(resources , R.drawable.ic_device_access_camera);
+		        Bitmap placeHolderImage = BitmapFactory.decodeResource(resources , R.drawable.ic_bookmark_pic);
 		        final AsyncDrawable asyncDrawable = new AsyncDrawable(resources,placeHolderImage, task);
 		        imgButton.setImageDrawable(asyncDrawable);
 		        task.execute(filePath, String.valueOf(index));
